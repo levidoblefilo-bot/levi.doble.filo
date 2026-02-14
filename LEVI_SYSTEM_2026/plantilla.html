@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  
+  <title>Boutique Levi - Plantilla Maestra de Visagismo</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&display=swap" rel="stylesheet">
+  
+  <style>
+    body, html {
+      margin: 0; padding: 0; background: #000; 
+      overflow: hidden; height: 100vh; width: 100vw; 
+      font-family: 'Cinzel', serif;
+    }
+
+    /* CONTENEDOR DE FONDO: Aquí se integra el fondo entregado */
+    .fondo-wrapper { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: 0; }
+    .hero-bg { 
+        width: 100%; height: 100%; 
+        background: url('corte.png') no-repeat center center; 
+        background-size: 100% 100%; 
+    }
+
+    #velo { position: fixed; inset: 0; background: #000; z-index: 1000; transition: 1.5s; pointer-events: none; opacity: 1; }
+
+    /* BOTÓN REINICIAR (ESQUINA SUPERIOR DERECHA) */
+    .btn-esquina {
+        position: fixed; top: 20px; right: 20px; z-index: 2000;
+        background: linear-gradient(145deg, #ffd700, #b8860b); border: 1px solid #444; color: black;
+        padding: 10px 20px; cursor: pointer; border-radius: 50px; font-weight: bold;
+        font-family: 'Cinzel', serif; font-size: 0.8rem; text-decoration: none;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.5); transition: 0.3s;
+    }
+    .btn-esquina:hover { transform: scale(1.1); box-shadow: 0 0 20px gold; }
+
+    /* INTERFAZ DE USUARIO */
+    .interfaz-cortes {
+        position: absolute; top: 8%; left: 50%; transform: translateX(-50%);
+        width: 90%; z-index: 30; text-align: center;
+    }
+
+    .titulo-reina { color: gold; font-size: 2.2rem; text-shadow: 0 0 15px rgba(255,215,0,0.7); margin-bottom: 15px; }
+
+    /* BOTONES DORADOS SÓLIDOS */
+    .grid-rostros { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
+    .btn-rostro, .btn-extra {
+        background: linear-gradient(145deg, #ffd700, #b8860b); border: 1px solid #444; color: black;
+        padding: 10px; cursor: pointer; border-radius: 25px; transition: 0.3s;
+        font-family: 'Cinzel', serif; font-size: 0.75rem; font-weight: bold;
+    }
+
+    /* BOTONES TRANSLÚCIDOS (PARA LOS CORTES ESPECÍFICOS) */
+    .submenu-cortes {
+        display: none; grid-template-columns: repeat(3, 1fr); gap: 10px;
+        margin-top: 15px; background: rgba(0,0,0,0.5); padding: 15px; border-radius: 10px;
+        border: 1px solid rgba(255,215,0,0.3);
+    }
+    .btn-corte-especifico {
+        background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 215, 0, 0.4); color: #fff;
+        padding: 8px; font-size: 0.7rem; cursor: pointer; border-radius: 5px; transition: 0.3s;
+    }
+    .btn-corte-especifico:hover { background: rgba(255, 215, 0, 0.2); border-color: gold; }
+
+    .interfaz-inferior { margin-top: 25px; display: flex; justify-content: center; gap: 15px; }
+
+    /* MODALES */
+    #cuadro-info, #modal-test {
+        display: none; position: fixed; top: 50%; left: 50%; 
+        transform: translate(-50%, -50%); width: 85%; max-width: 500px;
+        background: rgba(0, 0, 0, 0.95); border: 2px solid gold;
+        color: white; padding: 25px; z-index: 2000; border-radius: 15px;
+        box-shadow: 0 0 40px gold; max-height: 80vh; overflow-y: auto;
+    }
+
+    .btn-cerrar { display: block; margin: 20px auto 0; background: gold; border: none; padding: 10px 25px; cursor: pointer; font-family: 'Cinzel', serif; font-weight: bold; border-radius: 5px; }
+
+    .escena-central { position: absolute; bottom: 0; left: 0; width: 100%; height: 100%; z-index: 15; pointer-events: none; }
+    .personaje { position: absolute; bottom: 0; height: 40vh; width: auto; transition: 6s; }
+    #asistente-img { left: 5vw; pointer-events: auto; }
+  </style>
+</head>
+<body onclick="activarAudio()">
+
+  <audio id="musica-fondo" loop><source src="horas.mp3" type="audio/mpeg"></audio>
+  <div id="velo"></div>
+  <div class="fondo-wrapper"><div class="hero-bg"></div></div>
+
+  <a href="index.html" class="btn-esquina">REINICIAR</a>
+
+  <div class="interfaz-cortes">
+    <div class="titulo-reina">REINA</div>
+    <div class="grid-rostros">
+        <button class="btn-rostro" onclick="cargarSeccion('ovalado')">Ovalado</button>
+        <button class="btn-rostro" onclick="cargarSeccion('redondo')">Redondo</button>
+        <button class="btn-rostro" onclick="cargarSeccion('cuadrado')">Cuadrado</button>
+        <button class="btn-rostro" onclick="cargarSeccion('corazon')">Corazón</button>
+        <button class="btn-rostro" onclick="cargarSeccion('alargado')">Alargado</button>
+        <button class="btn-rostro" onclick="cargarSeccion('diamante')">Diamante</button>
+        <button class="btn-rostro" onclick="cargarSeccion('rectangular')">Rectangular</button>
+        <button class="btn-rostro" onclick="cargarSeccion('pera')">Pera</button>
+    </div>
+    
+    <div id="contenedor-cortes" class="submenu-cortes"></div>
+
+    <div class="interfaz-inferior">
+        <button class="btn-extra" onclick="lanzarTest()">TEST DE ROSTRO</button>
+        <button class="btn-extra" onclick="verColorInfo()">REINA DEL COLOR</button>
+        <button class="btn-extra" onclick="imprimirResultado()">IMPRIMIR</button>
+    </div>
+  </div>
+
+  <div id="cuadro-info"><h3 id="info-titulo" style="color:gold; text-align:center;"></h3><div id="info-cuerpo"></div><button class="btn-cerrar" onclick="cerrarInfo()">Cerrar</button></div>
+  <div id="modal-test"><h3 style="color:gold; text-align:center;">Diagnóstico</h3><div id="test-contenido"></div><button class="btn-cerrar" onclick="cerrarTest()">Cancelar</button></div>
+
+  <div class="escena-central">
+      <img src="asistente.png" class="personaje" id="asistente-img">
+  </div>
+
+  <script>
+    // --- LÓGICA DE VOZ NATURAL (AJUSTADA PARA REALISMO) ---
+    function hablar(mensaje) {
+        window.speechSynthesis.cancel();
+        const msg = new SpeechSynthesisUtterance(mensaje);
+        msg.lang = 'es-MX';
+        msg.rate = 0.90; // Velocidad pausada
+        msg.pitch = 1.1;  // Tono cálido y real
+        
+        const voces = window.speechSynthesis.getVoices();
+        const vozFemenina = voces.find(v => v.name.includes('Google') || v.name.includes('Natural'));
+        if (vozFemenina) msg.voice = vozFemenina;
+
+        setTimeout(() => { window.speechSynthesis.speak(msg); }, 100);
+    }
+
+    // --- FUNCIONES DE INTEGRACIÓN ---
+    function cargarSeccion(tipo) {
+        // Aquí se recibirá la información de cortes de la otra página
+        hablar(`Cargando información técnica para perfil ${tipo}.`);
+        const cont = document.getElementById('contenedor-cortes');
+        cont.style.display = "grid";
+        cont.innerHTML = `<button class="btn-corte-especifico">Corte 1 (${tipo})</button>
+                          <button class="btn-corte-especifico">Corte 2 (${tipo})</button>
+                          <button class="btn-corte-especifico">Corte 3 (${tipo})</button>`;
+    }
+
+    function lanzarTest() {
+        document.getElementById('modal-test').style.display = "block";
+        hablar("Iniciando test de visagismo. Analicemos tus rasgos.");
+        document.getElementById('test-contenido').innerHTML = `<p style="text-align:center;">[Aquí se integra el sistema de preguntas entregado]</p>`;
+    }
+
+    function verColorInfo() {
+        document.getElementById('cuadro-info').style.display = "block";
+        document.getElementById('info-titulo').innerText = "Colorimetría";
+        document.getElementById('info-cuerpo').innerHTML = "<p>[Aquí se integra la tabla de colores entregada]</p>";
+        hablar("Analizando la mejor paleta de color para tu piel.");
+    }
+
+    function imprimirResultado() {
+        hablar("Preparando tu ficha técnica para impresión.");
+        window.print();
+    }
+
+    function cerrarInfo() { document.getElementById('cuadro-info').style.display = "none"; }
+    function cerrarTest() { document.getElementById('modal-test').style.display = "none"; }
+    function activarAudio() { document.getElementById('musica-fondo').play().catch(()=>{}); }
+    
+    window.onload = () => { 
+        setTimeout(() => document.getElementById('velo').style.opacity = '0', 500);
+        hablar("Bienvenida. Soy tu asistente de visagismo.");
+    };
+  </script>
+</body>
+</html>

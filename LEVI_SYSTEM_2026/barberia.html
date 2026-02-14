@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="es-MX">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Master Barber - Protocolo Levi</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --gold: #ffd700;
+            --glass-dark: rgba(0, 0, 0, 0.8); /* Oscuro sólido para legibilidad sobre fondo natural */
+            --border: rgba(255, 215, 0, 0.6);
+        }
+
+        body, html { margin: 0; padding: 0; background: #000; overflow: hidden; height: 100vh; width: 100vw; font-family: 'Cinzel', serif; color: white; }
+        
+        /* FONDO NATURAL */
+        .fondo-wrapper { position: fixed; inset: 0; z-index: 0; }
+        .hero-bg { 
+            width: 100%; height: 100%; 
+            background: url('barberia.png') no-repeat center center; 
+            background-size: cover; 
+        }
+
+        #velo { position: fixed; inset: 0; background: #000; z-index: 1000; transition: 1.5s; pointer-events: none; opacity: 1; }
+
+        /* BOTÓN REGRESO */
+        .btn-orilla {
+            position: fixed; top: 20px; right: 20px; z-index: 2000;
+            background: var(--glass-dark); backdrop-filter: blur(10px);
+            border: 1px solid var(--gold); color: var(--gold); padding: 8px 15px;
+            cursor: pointer; border-radius: 50px; font-weight: bold; font-size: 0.7rem;
+            text-transform: uppercase;
+        }
+
+        /* INTERFAZ PRINCIPAL */
+        .interfaz-barberia { position: absolute; top: 5%; left: 50%; transform: translateX(-50%); width: 95%; z-index: 30; text-align: center; }
+        .titulo-master { 
+            color: var(--gold); font-size: 2.2rem; 
+            text-shadow: 2px 2px 15px #000, 0px 0px 10px rgba(255, 215, 0, 0.5); 
+            margin-bottom: 20px; letter-spacing: 4px; 
+        }
+        
+        /* SELECTORES DE ROSTRO */
+        .grid-rostros { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-bottom: 15px; }
+        .btn-rostro { 
+            background: var(--glass-dark); backdrop-filter: blur(8px);
+            border: 1px solid var(--border); color: #fff; 
+            padding: 12px 2px; cursor: pointer; border-radius: 10px; 
+            font-size: 0.65rem; font-family: 'Cinzel'; font-weight: bold;
+            transition: 0.3s;
+        }
+        .btn-rostro:hover { background: var(--gold); color: #000; border-color: var(--gold); }
+
+        /* PANTALLA DE INFORMACIÓN TÉCNICA */
+        #pantalla-info {
+            display: none; background: rgba(0, 0, 0, 0.85); 
+            backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px);
+            border: 2px solid var(--gold); padding: 20px; border-radius: 20px;
+            margin: 15px auto; width: 85%; max-height: 35vh; overflow-y: auto;
+            text-align: left; font-size: 0.9rem;
+            box-shadow: 0 0 30px rgba(0,0,0,0.8);
+        }
+        #pantalla-info strong { color: var(--gold); font-size: 1.2rem; display: block; border-bottom: 1px solid var(--gold); margin-bottom: 10px; padding-bottom: 5px; }
+        .etiqueta { color: var(--gold); font-weight: bold; font-size: 0.75rem; text-transform: uppercase; display: inline-block; width: 100%; margin-top: 10px; }
+
+        /* SUBMENÚ DE OPCIONES */
+        .submenu-barberia { 
+            display: none; grid-template-columns: repeat(5, 1fr); gap: 6px; 
+            margin-top: 15px; background: var(--glass-dark); 
+            backdrop-filter: blur(10px); padding: 10px; border-radius: 15px; 
+            border: 1px solid var(--border); 
+        }
+        .btn-opcion { 
+            background: #000; border: 1px solid var(--gold); color: #fff; 
+            padding: 10px 2px; font-size: 0.55rem; cursor: pointer; border-radius: 5px; 
+            font-family: 'Cinzel'; font-weight: bold; transition: 0.2s;
+        }
+        .btn-opcion:hover { background: var(--gold); color: black; }
+
+        .personaje { position: absolute; bottom: 0; height: 45vh; z-index: 15; left: 2vw; pointer-events: none; }
+    </style>
+</head>
+<body onclick="activarAudio()">
+
+    <audio id="music" loop><source src="horas.mp3" type="audio/mpeg"></audio>
+    <div id="velo"></div>
+    <div class="fondo-wrapper"><div class="hero-bg"></div></div>
+
+    <button class="btn-orilla" onclick="regresar()">REGRESO</button>
+
+    <div class="interfaz-barberia">
+        <div class="titulo-master">PROTOCOLO LEVI</div>
+        
+        <div class="grid-rostros">
+            <button class="btn-rostro" onclick="verOpciones('Ovalado')">Ovalado</button>
+            <button class="btn-rostro" onclick="verOpciones('Redondo')">Redondo</button>
+            <button class="btn-rostro" onclick="verOpciones('Cuadrado')">Cuadrado</button>
+            <button class="btn-rostro" onclick="verOpciones('Corazón')">Corazón</button>
+            <button class="btn-rostro" onclick="verOpciones('Alargado')">Alargado</button>
+            <button class="btn-rostro" onclick="verOpciones('Diamante')">Diamante</button>
+            <button class="btn-rostro" onclick="verOpciones('Rectangular')">Rectangular</button>
+            <button class="btn-rostro" onclick="verOpciones('Pera')">Pera</button>
+        </div>
+
+        <div id="pantalla-info"></div>
+        <div id="contenedor-opciones" class="submenu-barberia"></div>
+    </div>
+
+    <img src="asistente.png" class="personaje">
+
+    <script>
+        const datosBarberia = {
+            "Ovalado": [
+                {n: "Pompadour Moderno", r: "Laterales cortos (fade medio) y parte superior larga (8-10 cm).", t: "Point cutting en el tupé para dar dirección.", b: "Despeja el rostro y resalta la simetría natural."},
+                {n: "Buzz Cut", r: "Rapado uniforme con máquina (número 2 o 3).", t: "Pulido de contornos con trimmer.", b: "Rostro armónico, no necesita corregir nada."},
+                {n: "Undercut con raya", r: "Desconexión total lateral y parte superior larga peinada de lado.", t: "Navaja en la raya para marcarla.", b: "Aporta un look limpio y profesional."},
+                {n: "Taper Fade", r: "Desvanecido solo en patillas y nuca. El resto queda con tijera.", t: "Puntas ligeras.", b: "Estilo clásico que no altera las proporciones."},
+                {n: "Quiff Clásico", r: "Peinado hacia arriba y un lado, menos rígido que el Pompadour.", t: "Picoteado profundo para movimiento.", b: "Da un aire relajado y resalta los pómulos."}
+            ],
+            "Redondo": [
+                {n: "High Fade Pompa", r: "Rapado muy alto. Volumen máximo en la parte superior.", t: "Vaciado en los laterales del tupé.", b: "La altura arriba estira visualmente la cara."},
+                {n: "Faux Hawk", r: "Cresta sutil, más corto en los lados hacia el centro.", t: "Capas picadas en el centro.", b: "Crea un ángulo que rompe la redondez."},
+                {n: "Spiky Hair", r: "Cabello corto-medio peinado hacia arriba desordenado.", t: "Choppy layers con tijera de entresacar.", b: "Puntas verticales restan énfasis a mejillas."},
+                {n: "Side Part Volumen", r: "Raya lateral manteniendo el cabello alto, no aplastado.", t: "Elevación desde la raíz.", b: "Líneas diagonales cortan la redondez visual."},
+                {n: "Barba Angular", r: "Cabello corto arriba y barba perfilada en líneas rectas.", t: "Perfilado con navaja en la mandíbula.", b: "Crea artificialmente la mandíbula faltante."}
+            ],
+            "Cuadrado": [
+                {n: "Crew Cut", r: "Corte militar, corto a los lados y un poco más largo arriba.", t: "Mezcla suave (blending).", b: "Acompaña la forma fuerte del cráneo."},
+                {n: "Buzz Skin Fade", r: "Rapado a piel en la base subiendo al número 1 o 2.", t: "Pulido extremo.", b: "Enfatiza rasgos masculinos potentes."},
+                {n: "Textura Superior", r: "Corto a los lados, arriba capas cortas desordenadas.", t: "Navaja arriba para crear caos.", b: "Suaviza la dureza sin perder masculinidad."},
+                {n: "Slicked Back", r: "Laterales medios, largo peinado hacia atrás con pomada.", t: "Vaciado de peso para pegarlo al cráneo.", b: "Look de tipo duro que resalta mandíbula."},
+                {n: "French Crop", r: "Laterales con fade y flequillo corto y recto.", t: "Puntas dentadas en el flequillo.", b: "Recorta frente cuadrada y equilibra facciones."}
+            ],
+            "Corazón": [
+                {n: "Long Fringe", r: "Laterales cortos, flequillo largo sobre la frente.", t: "Desfilado en el flequillo.", b: "Oculta el ancho de la frente."},
+                {n: "Side Swept", r: "Peinado lateral relajado cubriendo la sien.", t: "Capas largas.", b: "Suaviza el ángulo de la barbilla puntiaguda."},
+                {n: "Volumen Sienes", r: "Evitar rapado total. Dejar cabello lateral para dar ancho.", t: "Tijera en los laterales.", b: "Balancea la proporción de la frente."},
+                {n: "Messy Medium", r: "Melena corta despeinada por toda la cabeza.", t: "Navaja para look informal.", b: "Disimula visualmente la forma de corazón."},
+                {n: "Barba Completa", r: "Barba con volumen en la zona del mentón.", t: "Recorte cuadrado.", b: "Rellena la parte más estrecha del rostro."}
+            ],
+            "Alargado": [
+                {n: "Side Part Plano", r: "Raya a un lado, peinado plano sin altura.", t: "Pulido con peine.", b: "No añade altura para no alargar más la cara."},
+                {n: "Fringe Cut", r: "Flequillo que cubre parte de la frente.", t: "Capas horizontales.", b: "Reduce visualmente la longitud del rostro."},
+                {n: "Capas Laterales", r: "Lados con tijera para mantener volumen lateral.", t: "Vaciado en puntas laterales.", b: "Ensancha el rostro hacia los lados."},
+                {n: "Corte Proporcional", r: "El mismo largo en toda la cabeza (ej. 4 cm).", t: "Uniforme.", b: "Mantiene el equilibrio sin líneas verticales."},
+                {n: "Taper Natural", r: "Desvanecido muy bajo con mucho cabello en costados.", t: "Acabado suave.", b: "Evita el efecto de cara estrecha."}
+            ],
+            "Diamante": [
+                {n: "Man Bun", r: "Cabello largo recogido en moño medio-alto.", t: "Desfilado antes de amarrar.", b: "Suaviza los pómulos anchos."},
+                {n: "Textured Crop", r: "Fade lateral, arriba capas cortas con mucha textura.", t: "Point cutting agresivo.", b: "Desvía atención de la anchura de pómulos."},
+                {n: "Flequillo Lateral", r: "Cabello medio peinado en diagonal.", t: "Slicing.", b: "Equilibra la frente estrecha."},
+                {n: "Scissor Fade", r: "Degradado solo con tijera para acabado suave.", t: "Conexión perfecta.", b: "Suaviza el rostro al no marcar ángulos."},
+                {n: "Long Capas", r: "Cabello al hombro con capas desde la mandíbula.", t: "Puntas ligeras.", b: "Rellena la zona del mentón y sienes."}
+            ],
+            "Rectangular": [
+                {n: "Raya Lateral Baja", r: "Raya situada cerca de la oreja.", t: "Peinado con caída natural.", b: "Rompe la simetría alargada."},
+                {n: "Top Corto", r: "Arriba corto y lados con volumen.", t: "Tijera de entresacar en lados.", b: "Evita que el rostro se vea más alto."},
+                {n: "Flequillo Desfilado", r: "Flequillo hacia adelante con mechones desiguales.", t: "Navaja en el fleco.", b: "Suaviza la frente cuadrada y larga."},
+                {n: "Corte de Tijera", r: "Todo el corte a mano sin máquinas.", t: "Acabado orgánico.", b: "Las formas redondean rasgos rectos."},
+                {n: "Barba Corta", r: "Barba de 3 días perfilada redondeada.", t: "Trimmer al 1.", b: "Acorta visualmente la barbilla."}
+            ],
+            "Pera": [
+                {n: "Pompa con lados", r: "Tupé alto sin rapar los lados.", t: "Volumen en raíz superior.", b: "Ensancha la frente para igualar mandíbula."},
+                {n: "Volumen Sienes", r: "Lados a 2-3 cm de longitud.", t: "Corte cuadrado lateral.", b: "Crea ancho visual en la parte superior."},
+                {n: "Long Quiff", r: "Tupé largo peinado con volumen y desorden.", t: "Vaciado en puntas.", b: "Sube la mirada ignorando la mandíbula ancha."},
+                {n: "Comb Over", r: "Peinado de lado con mucha elevación.", t: "Polvos de volumen.", b: "Equilibra el peso visual del rostro."},
+                {n: "Capas Medias", r: "Estilo surfero con capas en movimiento.", t: "Ceras mate.", b: "El movimiento distrae de la base ancha."}
+            ]
+        };
+
+        function hablar(mensaje) {
+            window.speechSynthesis.cancel();
+            const msg = new SpeechSynthesisUtterance(mensaje);
+            msg.lang = 'es-MX'; msg.rate = 0.95;
+            window.speechSynthesis.speak(msg);
+        }
+
+        function verOpciones(tipo) {
+            hablar(`Protocolo ${tipo}.`);
+            const cont = document.getElementById('contenedor-opciones');
+            const pantalla = document.getElementById('pantalla-info');
+            pantalla.style.display = "none";
+            cont.style.display = "grid";
+            cont.innerHTML = datosBarberia[tipo].map(o => `
+                <button class="btn-opcion" onclick="mostrarInfo('${tipo}', '${o.n}')">${o.n}</button>
+            `).join('');
+        }
+
+        function mostrarInfo(tipo, nombreCorte) {
+            const corte = datosBarberia[tipo].find(c => c.n === nombreCorte);
+            const pantalla = document.getElementById('pantalla-info');
+            pantalla.style.display = "block";
+            pantalla.innerHTML = `
+                <strong>${corte.n}</strong>
+                <span class="etiqueta">Realización:</span> ${corte.r}<br>
+                <span class="etiqueta">Texturización:</span> ${corte.t}<br>
+                <span class="etiqueta">Beneficio:</span> ${corte.b}
+            `;
+            hablar(`${corte.n}. ${corte.b}`);
+        }
+
+        function regresar() {
+            hablar("Regresando.");
+            document.getElementById('velo').style.opacity = '1';
+            setTimeout(() => { window.location.href = 'butique.html'; }, 1000);
+        }
+
+        function activarAudio() { document.getElementById('music').play().catch(e=>{}); }
+
+        window.onload = () => { 
+            setTimeout(() => {
+                document.getElementById('velo').style.opacity = '0';
+                hablar("Protocolo Levi activado.");
+            }, 800);
+        };
+    </script>
+</body>
+</html>

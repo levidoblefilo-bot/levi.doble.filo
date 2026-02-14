@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Boutique Levi - Extensión Suprema 2026</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    :root { 
+        --rosa-neon: #ff007f; 
+        --glow-foco: 0 0 15px #ff007f, 0 0 30px #ff007f;
+    }
+
+    body, html { margin: 0; padding: 0; background: #000; overflow: hidden; height: 100vh; width: 100vw; font-family: 'Cinzel', serif; }
+    
+    .fondo-wrapper { position: fixed; inset: 0; z-index: 0; }
+    .hero-bg { 
+        width: 100%; height: 100%; 
+        background: url('extensiones.png') no-repeat center center; 
+        background-size: cover; 
+    }
+
+    #velo { position: fixed; inset: 0; background: #000; z-index: 1000; transition: 1.5s; pointer-events: none; opacity: 1; }
+
+    .btn-regresar {
+        position: fixed; top: 25px; left: 25px; z-index: 2000;
+        background: rgba(0, 0, 0, 0.4); border: 2px solid var(--rosa-neon); color: var(--rosa-neon); 
+        padding: 10px 25px; cursor: pointer; border-radius: 50px; font-weight: bold;
+        text-transform: uppercase; backdrop-filter: blur(5px);
+        box-shadow: 0 0 10px var(--rosa-neon); transition: 0.4s;
+    }
+    .btn-regresar:hover { box-shadow: var(--glow-foco); background: var(--rosa-neon); color: white; }
+
+    .interfaz-extensiones { position: absolute; top: 5%; left: 50%; transform: translateX(-50%); width: 95%; z-index: 30; text-align: center; }
+    
+    .titulo-principal { 
+        color: #fff; font-size: 2.5rem; 
+        text-shadow: 0 0 10px #fff, 0 0 20px var(--rosa-neon), 0 0 40px var(--rosa-neon);
+        margin-bottom: 30px; letter-spacing: 6px; 
+    }
+
+    .contenedor-categorias { display: flex; justify-content: center; gap: 15px; flex-wrap: wrap; max-width: 1100px; margin: 0 auto; }
+    .btn-categoria {
+        background: rgba(0, 0, 0, 0.7); border: 2px solid var(--rosa-neon); color: #fff;
+        padding: 12px 20px; cursor: pointer; font-weight: bold; font-size: 0.9rem; font-family: 'Cinzel';
+        text-shadow: 0 0 10px var(--rosa-neon); box-shadow: 0 0 10px var(--rosa-neon);
+        border-radius: 8px; transition: 0.3s; text-transform: uppercase;
+    }
+    .btn-categoria:hover { 
+        background: var(--rosa-neon);
+        box-shadow: var(--glow-foco);
+        transform: translateY(-3px);
+    }
+
+    #holograma-info {
+        display: none; background: rgba(0, 0, 0, 0.9); color: white; 
+        border: 2px solid var(--rosa-neon); padding: 25px; border-radius: 15px;
+        margin: 20px auto; width: 85%; max-width: 800px; max-height: 55vh; overflow-y: auto;
+        backdrop-filter: blur(15px); 
+        box-shadow: 0 0 25px var(--rosa-neon), inset 0 0 15px var(--rosa-neon);
+        text-align: left; animation: encender 0.6s ease-out;
+    }
+    .info-item { margin-bottom: 12px; border-bottom: 1px solid rgba(255, 0, 127, 0.2); padding-bottom: 8px; }
+    .info-titulo { color: var(--rosa-neon); font-weight: bold; font-size: 1rem; display: block; text-shadow: 0 0 5px var(--rosa-neon); }
+    .info-desc { font-size: 0.9rem; color: #ddd; margin-top: 4px; line-height: 1.4; }
+    
+    .btn-cerrar { background: var(--rosa-neon); color: white; border: none; padding: 6px 15px; cursor: pointer; float: right; border-radius: 4px; font-family: 'Cinzel'; font-size: 0.8rem; }
+
+    .personaje { position: absolute; bottom: 0; height: 42vh; z-index: 15; left: 3vw; pointer-events: none; filter: drop-shadow(0 0 15px var(--rosa-neon)); }
+
+    @keyframes encender { from { opacity: 0; filter: brightness(3); } to { opacity: 1; filter: brightness(1); } }
+  </style>
+</head>
+<body onclick="activarAudio()">
+
+  <audio id="musica-fondo" loop><source src="horas.mp3" type="audio/mpeg"></audio>
+  <div id="velo"></div>
+  <div class="fondo-wrapper"><div class="hero-bg"></div></div>
+
+  <button class="btn-regresar" onclick="location.href='butique.html'">REGRESAR</button>
+
+  <div class="interfaz-extensiones">
+    <div class="titulo-principal">EXTENSIÓN SUPREMA</div>
+    
+    <div class="contenedor-categorias">
+        <button class="btn-categoria" onclick="mostrarHolo('composicion')">¿De qué están hechas?</button>
+        <button class="btn-categoria" onclick="mostrarHolo('cuidados')">Cuidados Home</button>
+        <button class="btn-categoria" onclick="mostrarHolo('peinados2026')">Tendencias Peinado 2026</button>
+        <button class="btn-categoria" onclick="mostrarHolo('duracion')">Duración y Tipos</button>
+        <button class="btn-categoria" onclick="mostrarHolo('elevar')">Tips de Gala</button>
+    </div>
+    
+    <div id="holograma-info">
+        <button class="btn-cerrar" onclick="cerrarHolo()">CERRAR</button>
+        <h2 id="holo-header" style="color:var(--rosa-neon); text-align:center; margin-top:0; letter-spacing:3px; font-size: 1.3rem;"></h2>
+        <div id="holo-contenido"></div>
+    </div>
+  </div>
+
+  <img src="asistente.png" class="personaje">
+
+  <script>
+    const baseDeDatos = {
+        composicion: { 
+            titulo: "COMPOSICIÓN Y UNIÓN", 
+            items: [
+                { t: "Cabello Humano 100% Remy", d: "Prioridad actual con cutícula alineada para movimiento natural." }, 
+                { t: "Sistemas de Unión", d: "Queratina (proteína fundida), Tape-in (grado médico) y Cosidas (hilo)." }
+            ] 
+        },
+        cuidados: { 
+            titulo: "PROTOCOLO DE CUIDADO EN CASA", 
+            items: [
+                { t: "Champú sin sulfatos", d: "Evita debilitar adhesivos y resecar la extensión." }, 
+                { t: "Aceite de Argán", d: "Aplicar solo de medios a puntas para hidratación." },
+                { t: "Funda de Seda", d: "Reduce fricción al dormir evitando nudos." },
+                { t: "Cepillo Especial", d: "Cerdas suaves para no jalar las uniones." }
+            ] 
+        },
+        peinados2026: { 
+            titulo: "PEINADOS POR OCASIÓN 2026", 
+            items: [
+                { t: "Casual: Bob Moderno", d: "Puntas en capas y curva hacia adentro para movimiento natural." }, 
+                { t: "Casual: Moños Desestructurados", d: "Mechones sueltos al frente para un look natural." },
+                { t: "Gala: Bob Pulido / Ondas Glam", d: "Acabado espejo y ondas perfectamente definidas." },
+                { t: "Gala: Recogido Bajo Pulido", d: "En la nuca para resaltar escotes importantes." }
+            ] 
+        },
+        duracion: { 
+            titulo: "DURACIÓN Y TENDENCIAS 2025", 
+            items: [
+                { t: "Queratina (Fusión)", d: "La más duradera: entre 3 a 6 meses." }, 
+                { t: "Tape-in (Adhesivas)", d: "Retoque cada 6-8 semanas. Tendencia #1 por rapidez." },
+                { t: "Banda Invisible (Halo)", d: "Cero daño y aplicación en segundos." }
+            ] 
+        },
+        elevar: { 
+            titulo: "CÓMO ELEVAR TU PEINADO", 
+            items: [
+                { t: "Acabado Espejo", d: "Uso de geles y ceras para eliminar el frizz por completo." }, 
+                { t: "Accesorios Metálicos", d: "Incorporación de perlas y pinzas decorativas (Tendencia 2026)." },
+                { t: "Volumen Estratégico", d: "Añade volumen en coronilla para una silueta dramática." }
+            ] 
+        }
+    };
+
+    function hablar(mensaje) {
+        window.speechSynthesis.cancel();
+        const voz = new SpeechSynthesisUtterance(mensaje);
+        voz.lang = 'es-MX'; voz.rate = 0.9;
+        window.speechSynthesis.speak(voz);
+    }
+
+    function mostrarHolo(categoria) {
+        const data = baseDeDatos[categoria];
+        let textoNarrar = `${data.titulo}. `;
+        
+        document.getElementById('holo-header').innerText = data.titulo;
+        const contenedor = document.getElementById('holo-contenido');
+        contenedor.innerHTML = '';
+        
+        data.items.forEach(item => {
+            contenedor.innerHTML += `
+                <div class="info-item">
+                    <span class="info-titulo">${item.t}</span>
+                    <div class="info-desc">${item.d}</div>
+                </div>`;
+            textoNarrar += `${item.t}: ${item.d}. `;
+        });
+        
+        document.getElementById('holograma-info').style.display = 'block';
+        hablar(textoNarrar);
+    }
+
+    function cerrarHolo() { document.getElementById('holograma-info').style.display = 'none'; window.speechSynthesis.cancel(); }
+    function activarAudio() { document.getElementById('musica-fondo').play().catch(e => {}); }
+    window.onload = () => { setTimeout(() => document.getElementById('velo').style.opacity = '0', 600); };
+  </script>
+</body>
+</html>

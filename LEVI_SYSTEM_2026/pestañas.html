@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MIRADA & ROSTRO | Ingeniería 2026</title>
+    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
+    <style>
+        body, html { margin: 0; padding: 0; width: 100%; height: 100vh; background: #000; font-family: 'Cinzel', serif; overflow: hidden; }
+        
+        #sala-fondo { 
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
+            background: url('pestañas.png') no-repeat center center; 
+            background-size: cover; z-index: 0; 
+            filter: brightness(0.4); transition: background 0.8s ease-in-out;
+        }
+
+        #particles-js { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 5; pointer-events: none; }
+        
+        /* LETRERO NEÓN DINÁMICO */
+        .neon-toggle { position: absolute; top: 8%; left: 50%; transform: translateX(-50%); z-index: 100; cursor: pointer; }
+        .neon-box {
+            padding: 10px 25px; border: 2px solid #f8e1e7; border-radius: 10px;
+            background: rgba(0,0,0,0.7); display: flex; flex-direction: column; align-items: center; gap: 5px;
+            box-shadow: 0 0 15px #f8e1e7; animation: flicker 3s infinite; transition: 0.5s;
+        }
+        @keyframes flicker { 0%, 18%, 22%, 25%, 53%, 57%, 100% { opacity: 1; } 20%, 24%, 55% { opacity: 0.8; } }
+        .neon-box.oro { border-color: #ffd700; box-shadow: 0 0 15px #ffd700; }
+        .neon-box i { font-size: 1.8rem; color: inherit; text-shadow: 0 0 10px currentColor; }
+        .neon-box span { font-size: 0.6rem; letter-spacing: 2px; color: inherit; }
+
+        #cuadro-texto {
+            position: absolute; top: 2%; left: 50%; transform: translateX(-50%);
+            background: rgba(0,0,0,0.85); color: #fff; padding: 8px 30px; 
+            border-left: 3px solid #ffd700; z-index: 60; text-align: center;
+            text-transform: uppercase; letter-spacing: 2px; font-size: 0.8rem;
+        }
+
+        /* PERSONAJES */
+        .escena-central { position: absolute; bottom: 5%; width: 100%; display: flex; justify-content: center; align-items: flex-end; z-index: 15; pointer-events: none; }
+        #invitado, #asistente { height: 35vh; filter: drop-shadow(0 0 15px #000); }
+        #asistente { margin-right: 20px; }
+
+        /* MENÚS */
+        #menu-servicios { position: absolute; top: 22%; left: 5%; width: 25%; z-index: 100; display: flex; flex-direction: column; gap: 10px; }
+        .btn-item { background: rgba(0, 0, 0, 0.75); border: 1px solid rgba(255,215,0,0.2); color: #fff; padding: 12px; cursor: pointer; font-family: 'Cinzel'; font-size: 0.7rem; text-align: left; transition: 0.3s; }
+        .btn-item:hover { background: #ffd700; color: #000; transform: translateX(5px); }
+
+        /* FICHA TÉCNICA */
+        #ficha-tecnica {
+            position: absolute; top: 22%; right: 5%; width: 45%; 
+            background: rgba(0,0,0,0.95); border: 1px solid #ffd700; padding: 25px;
+            z-index: 100; color: #fff; display: none;
+        }
+        .color-circle { display: inline-block; width: 15px; height: 15px; border-radius: 50%; margin-right: 8px; border: 1px solid #fff; vertical-align: middle; }
+
+        /* BOTÓN REGRESAR CORREGIDO */
+        .btn-regresar { 
+            position: fixed; bottom: 4%; right: 4%; z-index: 200; 
+            background: rgba(0,0,0,0.8); border: 1px solid #ffd700; color: #ffd700; 
+            padding: 12px 25px; cursor: pointer; font-family: 'Cinzel';
+            letter-spacing: 2px; font-size: 0.75rem; transition: 0.4s;
+            box-shadow: 0 0 10px rgba(255, 215, 0, 0.2);
+        }
+        .btn-regresar:hover { 
+            background: #ffd700; color: #000; 
+            box-shadow: 0 0 20px #ffd700;
+        }
+    </style>
+</head>
+<body>
+    <div id="sala-fondo"></div>
+    <div id="particles-js"></div>
+    <div id="cuadro-texto">ESTACIÓN DE ANÁLISIS FACIAL</div>
+
+    <div class="neon-toggle" onclick="cambiarModulo()">
+        <div id="neon-box" class="neon-box">
+            <i id="neon-icon" class="fa-solid fa-brush"></i>
+            <span id="neon-text">IR A MAQUILLAJE</span>
+        </div>
+    </div>
+
+    <div class="escena-central">
+        <img src="asistente.png" id="asistente">
+        <img src="" id="invitado">
+    </div>
+
+    <div id="menu-servicios"></div>
+
+    <div id="ficha-tecnica">
+        <h2 id="f-titulo" style="color:#ffd700; border-bottom: 1px solid #ffd700; padding-bottom: 10px; text-transform: uppercase;"></h2>
+        <div id="f-contenido"></div>
+        <button onclick="document.getElementById('ficha-tecnica').style.display='none'" style="width:100%; background:none; border:1px solid #fff; color:#fff; margin-top:15px; cursor:pointer; font-family:'Cinzel'; padding: 5px;">CERRAR ANÁLISIS</button>
+    </div>
+
+    <button class="btn-regresar" onclick="window.location.href='servicios.html'">
+        <i class="fas fa-arrow-left"></i> REGRESAR A SERVICIOS
+    </button>
+
+    <script>
+        let modoActual = 'pestanas';
+
+        const datos = {
+            pestanas: {
+                fondo: 'pestañas.png', nextIcon: 'fa-brush', nextLabel: 'IR A MAQUILLAJE', nextStyle: 'seda', titulo: 'SISTEMA DE MIRADA ACTIVO',
+                secciones: {
+                    'Foxy Eye L-Lift': 'Técnica de estiramiento visual mediante fibras en curvatura L.',
+                    'Wispy Angel': 'Efecto texturizado con fibras de seda ultra ligeras y mapeo dinámico.',
+                    'LED-Gel System': 'Fijación de alta tecnología con curado instantáneo y retención de 8 semanas.'
+                }
+            },
+            maquillaje: {
+                fondo: 'maquillaje.png', nextIcon: 'fa-eye', nextLabel: 'IR A PESTAÑAS', nextStyle: 'oro', titulo: 'ANÁLISIS DE COLORIMETRÍA',
+                secciones: {
+                    'Piel Fría (Subtono Azul)': {
+                        desc: 'Pigmentos recomendados para subtonos fríos.',
+                        colores: [{ n: 'Rosa Malva', c: '#D473D4' }, { n: 'Plata Líquida', c: '#C0C0C0' }, { n: 'Borgonia', c: '#800020' }]
+                    },
+                    'Piel Cálida (Subtono Oro)': {
+                        desc: 'Pigmentos recomendados para subtonos cálidos.',
+                        colores: [{ n: 'Terracota', c: '#E2725B' }, { n: 'Cobre', c: '#B87333' }, { n: 'Oro 24K', c: '#FFD700' }]
+                    },
+                    'Piel Neutra (Balance)': {
+                        desc: 'Pigmentos versátiles para subtonos equilibrados.',
+                        colores: [{ n: 'Nude Beige', c: '#F5F5DC' }, { n: 'Champagne', c: '#F7E7CE' }, { n: 'Rosa Viejo', c: '#C08081' }]
+                    }
+                }
+            }
+        };
+
+        function cambiarModulo() {
+            modoActual = (modoActual === 'pestanas') ? 'maquillaje' : 'pestanas';
+            actualizarInterfaz();
+        }
+
+        function actualizarInterfaz() {
+            const info = datos[modoActual];
+            const neonBox = document.getElementById('neon-box');
+            
+            document.getElementById('sala-fondo').style.backgroundImage = `url('${info.fondo}')`;
+            document.getElementById('cuadro-texto').innerText = info.titulo;
+            document.getElementById('neon-icon').className = `fa-solid ${info.nextIcon}`;
+            document.getElementById('neon-text').innerText = info.nextLabel;
+            
+            if(info.nextStyle === 'oro') { neonBox.classList.add('oro'); neonBox.style.color = "#ffd700"; } 
+            else { neonBox.classList.remove('oro'); neonBox.style.color = "#f8e1e7"; }
+
+            const menu = document.getElementById('menu-servicios');
+            menu.innerHTML = '';
+            Object.keys(info.secciones).forEach(nombre => {
+                const btn = document.createElement('button');
+                btn.className = 'btn-item';
+                btn.innerText = nombre;
+                btn.onclick = () => mostrarFicha(nombre);
+                menu.appendChild(btn);
+            });
+            document.getElementById('ficha-tecnica').style.display = 'none';
+        }
+
+        function mostrarFicha(nombre) {
+            const fContenido = document.getElementById('f-contenido');
+            document.getElementById('f-titulo').innerText = nombre;
+            fContenido.innerHTML = '';
+
+            if (modoActual === 'maquillaje') {
+                const data = datos.maquillaje.secciones[nombre];
+                let html = `<p style="font-size:0.85rem; color:#ccc;">${data.desc}</p>`;
+                html += `<strong style="color:#ffd700; font-size:0.7rem;">PALETA DE INGENIERÍA:</strong><br><br>`;
+                data.colores.forEach(col => {
+                    html += `<div style="margin-bottom:8px; font-size:0.9rem;"><span class="color-circle" style="background:${col.c}"></span>${col.n}</div>`;
+                });
+                fContenido.innerHTML = html;
+            } else {
+                fContenido.innerHTML = `<p style="font-size:0.9rem; color:#ccc; line-height:1.6;">${datos.pestanas.secciones[nombre]}</p>`;
+            }
+            document.getElementById('ficha-tecnica').style.display = 'block';
+        }
+
+        window.onload = () => {
+            const genero = localStorage.getItem('usuario_genero') || 'Hombre';
+            document.getElementById('invitado').src = `avatar_${genero.toLowerCase()}.png`;
+            actualizarInterfaz();
+            particlesJS('particles-js', { "particles": { "number": { "value": 40 }, "color": { "value": "#e2c275" }, "opacity": { "value": 0.4 }, "size": { "value": 1.5 }, "move": { "enable": true, "speed": 1 } } });
+        };
+    </script>
+</body>
+</html>

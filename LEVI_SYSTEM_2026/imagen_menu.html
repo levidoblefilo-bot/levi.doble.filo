@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>MENU - PROTOCOLO LEVI</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body, html { 
+            margin: 0; padding: 0; background-color: #000; 
+            overflow: hidden; width: 100vw; height: 100vh; 
+            font-family: 'Cinzel', serif; 
+        }
+        
+        #fondo-pantalla {
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+            background-image: url('imagen.png');
+            background-size: 100% 100%; 
+            background-position: center;
+            background-repeat: no-repeat;
+            z-index: 1;
+            transition: transform 2.5s ease-in-out;
+        }
+
+        /* BOTÓN DE REGRESO A SALA.HTML */
+        .btn-regreso {
+            position: fixed;
+            top: 25px;
+            left: 25px;
+            padding: 12px 25px;
+            background: rgba(0, 0, 0, 0.7);
+            color: #d4af37; /* Color dorado suave */
+            border: 1px solid #d4af37;
+            cursor: pointer;
+            z-index: 2000;
+            font-family: 'Cinzel', serif;
+            font-size: 0.8rem;
+            letter-spacing: 3px;
+            transition: all 0.5s ease;
+            text-transform: uppercase;
+        }
+
+        .btn-regreso:hover {
+            background: #d4af37;
+            color: #000;
+            box-shadow: 0 0 20px rgba(212, 175, 55, 0.4);
+        }
+
+        .zona-clic {
+            position: absolute; top: 0; height: 100vh; z-index: 50; 
+            cursor: pointer; background: transparent; 
+        }
+        #puerta-izquierda { left: 0; width: 33.33%; }
+        #puerta-central { left: 33.33%; width: 33.33%; }
+        #puerta-derecha { left: 66.66%; width: 33.33%; }
+
+        .escena-central {
+            position: absolute; bottom: 0; width: 100%;
+            display: flex; justify-content: center; align-items: flex-end;
+            z-index: 20; pointer-events: none; gap: 20px;
+        }
+
+        .figura { 
+            height: 38vh; width: auto; 
+            filter: drop-shadow(0 0 15px #000);
+            transition: opacity 1s ease;
+        }
+
+        .oculto { display: none !important; }
+        .hacer-zoom { transform: scale(1.25); }
+        #velo { position: fixed; inset: 0; background: #000; z-index: 1000; transition: 1.5s; pointer-events: none; opacity: 1; }
+    </style>
+</head>
+<body onclick="iniciarEscucha()">
+
+    <audio id="musica-fondo" loop>
+        <source src="horas.mp3" type="audio/mpeg">
+    </audio>
+
+    <div id="velo"></div>
+    
+    <button class="btn-regreso" onclick="regresarASala()">← Regresar a Sala</button>
+
+    <div id="fondo-pantalla"></div>
+
+    <div id="puerta-izquierda" class="zona-clic" onclick="irA('butique.html', 'Butique')"></div>
+    <div id="puerta-central" class="zona-clic" onclick="irA('servicios.html', 'Servicios')"></div>
+    <div id="puerta-derecha" class="zona-clic" onclick="irA('cuidado.html', 'Cuidado')"></div>
+
+    <div class="escena-central">
+        <img src="avatar_hombre.png" id="fig-H" class="figura oculto">
+        <img src="asistente.png" id="fig-A" class="figura">
+        <img src="avatar_mujer.png" id="fig-M" class="figura oculto">
+    </div>
+
+    <script>
+        const music = document.getElementById('musica-fondo');
+        let vozNatural = null;
+
+        function cargarVoz() {
+            const voces = window.speechSynthesis.getVoices();
+            vozNatural = voces.find(v => v.lang === 'es-MX' && v.name.includes('Google')) || 
+                         voces.find(v => v.lang === 'es-MX') ||
+                         voces.find(v => v.lang.includes('es'));
+        }
+        window.speechSynthesis.onvoiceschanged = cargarVoz;
+
+        function hablar(mensaje) {
+            window.speechSynthesis.cancel();
+            const elocucion = new SpeechSynthesisUtterance(mensaje);
+            if (vozNatural) elocucion.voice = vozNatural;
+            elocucion.pitch = 0.95; 
+            elocucion.rate = 0.95; 
+            window.speechSynthesis.speak(elocucion);
+        }
+
+        window.onload = () => {
+            document.getElementById('velo').style.opacity = '0';
+            
+            // PRIORIDAD DE MEMORIA
+            const nombre = localStorage.getItem('user_name') || "";
+            if(localStorage.getItem('p_H') === 'true') document.getElementById('fig-H').classList.remove('oculto');
+            if(localStorage.getItem('p_M') === 'true') document.getElementById('fig-M').classList.remove('oculto');
+
+            // CONTINUIDAD DE AUDIO
+            const savedTime = localStorage.getItem('musicTime');
+            if (savedTime) music.currentTime = parseFloat(savedTime);
+            music.play().catch(() => {});
+
+            // Persistencia en tiempo real
+            setInterval(() => { 
+                localStorage.setItem('musicTime', music.currentTime); 
+            }, 1000);
+
+            // RESPUESTA ALEATORIA
+            setTimeout(() => {
+                const frases = [
+                    "Unidad vinculada con éxito.",
+                    "Sincronización de interfaz completada.",
+                    "Identidad confirmada en el sistema.",
+                    "Protocolo de reconocimiento activo."
+                ];
+                const fraseAleatoria = frases[Math.floor(Math.random() * frases.length)];
+                let texto = nombre ? `${nombre}, ${fraseAleatoria.toLowerCase()}` : "Sistema en línea.";
+                hablar(texto);
+            }, 1200);
+        };
+
+        // FUNCIÓN REGRESAR A SALA.HTML
+        function regresarASala() {
+            localStorage.setItem('musicTime', music.currentTime);
+            hablar("Regresando a la sala central.");
+            document.getElementById('velo').style.opacity = '1';
+            
+            setTimeout(() => { 
+                window.location.href = 'sala.html'; 
+            }, 1500);
+        }
+
+        function irA(url, destino) {
+            localStorage.setItem('musicTime', music.currentTime);
+            document.getElementById('fondo-pantalla').classList.add('hacer-zoom');
+            hablar(`Entendido, entrando a ${destino}.`);
+            document.getElementById('velo').style.opacity = '1';
+
+            setTimeout(() => { 
+                window.location.href = url; 
+            }, 2500);
+        }
+
+        function iniciarEscucha() {
+            if (music.paused) music.play();
+        }
+    </script>
+</body>
+</html>

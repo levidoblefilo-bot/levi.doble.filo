@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TRATAMIENTO CAPILAR | Sistema Dual</title>
+    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
+    <style>
+        body, html { margin: 0; padding: 0; width: 100%; height: 100vh; background: #000; font-family: 'Cinzel', serif; overflow: hidden; }
+        
+        #sala-fondo { 
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
+            background: url('capilar.png') no-repeat center center; 
+            background-size: cover; z-index: 0; 
+            filter: brightness(0.4); transition: 0.8s;
+        }
+
+        #particles-js { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 5; pointer-events: none; }
+        
+        #cuadro-texto {
+            position: absolute; top: 3%; left: 50%; transform: translateX(-50%);
+            background: rgba(0,0,0,0.85); color: #fff; padding: 10px 40px; 
+            border-left: 3px solid #ffd700; z-index: 60; text-align: center;
+            text-transform: uppercase; letter-spacing: 2px; font-size: 0.8rem;
+            transition: 0.5s;
+        }
+
+        /* SELECTOR DUAL */
+        .selector-modo {
+            position: absolute; top: 12%; left: 50%; transform: translateX(-50%);
+            display: flex; gap: 20px; z-index: 150;
+        }
+        .btn-modo {
+            padding: 10px 25px; border: 1px solid #fff; background: rgba(0,0,0,0.7);
+            color: #fff; cursor: pointer; font-family: 'Cinzel'; font-size: 0.7rem;
+            letter-spacing: 2px; transition: 0.4s;
+        }
+        .btn-modo.active-nat { border-color: #a2d149; color: #a2d149; box-shadow: 0 0 10px #a2d149; }
+        .btn-modo.active-qui { border-color: #ff3366; color: #ff3366; box-shadow: 0 0 10px #ff3366; }
+
+        .escena-central { position: absolute; bottom: 5%; width: 100%; display: flex; justify-content: center; align-items: flex-end; z-index: 15; pointer-events: none; }
+        #invitado, #asistente { height: 35vh; filter: drop-shadow(0 0 15px #000); }
+        #asistente { margin-right: 20px; }
+
+        #menu-servicios { position: absolute; top: 25%; left: 5%; width: 28%; z-index: 100; display: flex; flex-direction: column; gap: 10px; }
+        .btn-item { background: rgba(0, 0, 0, 0.75); border: 1px solid rgba(255,255,255,0.1); color: #fff; padding: 15px; cursor: pointer; font-family: 'Cinzel'; font-size: 0.7rem; text-align: left; transition: 0.3s; }
+        .btn-item:hover { padding-left: 25px; }
+
+        #ficha-tecnica {
+            position: absolute; top: 25%; right: 5%; width: 45%; 
+            background: rgba(0,0,0,0.95); border: 1px solid #ffd700; padding: 25px;
+            z-index: 100; color: #fff; display: none;
+        }
+        .f-label { color: #ffd700; font-size: 0.65rem; display: block; margin-top: 15px; text-transform: uppercase; font-weight: bold; }
+        .f-data { font-size: 0.85rem; color: #ddd; line-height: 1.5; }
+
+        #music-control { position: fixed; top: 3%; right: 3%; z-index: 200; color: #fff; cursor: pointer; font-size: 1.2rem; opacity: 0.6; }
+        .cont-navegacion { position: fixed; bottom: 4%; right: 4%; display: flex; gap: 15px; z-index: 110; }
+        .btn-nav { background: rgba(0,0,0,0.8); border: 1px solid #fff; color: #fff; padding: 10px 20px; cursor: pointer; font-family: 'Cinzel'; font-size: 0.6rem; }
+    </style>
+</head>
+<body>
+    <div id="sala-fondo"></div>
+    <div id="particles-js"></div>
+    <div id="cuadro-texto">ANÁLISIS ESTRUCTURAL CAPILAR</div>
+
+    <div id="music-control" onclick="toggleMusic()"><i id="music-icon" class="fas fa-music"></i></div>
+    <audio id="bg-music" loop><source src="relax_capilar.mp3" type="audio/mpeg"></audio>
+
+    <div class="selector-modo">
+        <button id="btn-nat" class="btn-modo" onclick="cambiarModo('natural')">PRODUCTOS NATURALES</button>
+        <button id="btn-qui" class="btn-modo" onclick="cambiarModo('quimico')">PRODUCTOS QUÍMICOS</button>
+    </div>
+
+    <div class="escena-central">
+        <img src="asistente.png" id="asistente">
+        <img src="" id="invitado">
+    </div>
+
+    <div id="menu-servicios"></div>
+
+    <div id="ficha-tecnica">
+        <h2 id="f-titulo" style="color:#ffd700; border-bottom: 1px solid #ffd700; padding-bottom: 10px; font-size: 1rem;"></h2>
+        <span class="f-label">COMPOSICIÓN Y USO:</span>
+        <p id="f-uso" class="f-data"></p>
+        <span class="f-label">VENTAJAS DE INGENIERÍA:</span>
+        <p id="f-ventajas" class="f-data" style="color:#ffd700;"></p>
+        <button onclick="document.getElementById('ficha-tecnica').style.display='none'" style="width:100%; background:none; border:1px solid #fff; color:#fff; margin-top:20px; cursor:pointer; font-family:'Cinzel'; padding: 8px;">CERRAR SCAN</button>
+    </div>
+
+    <div class="cont-navegacion">
+        <button class="btn-nav" onclick="window.location.href='cuidado.html'">VOLVER A CUIDADO</button>
+        <button class="btn-nav" onclick="window.location.href='servicios.html'">MENÚ PRINCIPAL</button>
+    </div>
+
+    <script>
+        const datos = {
+            natural: {
+                color: '#a2d149',
+                titulo: 'TERAPIA CAPILAR BOTÁNICA',
+                servicios: {
+                    'Óleo de Argán & Ozono': {
+                        uso: 'Infusión de ozono para abrir cutícula seguido de aplicación de aceites prensados en frío (Argán y Romero).',
+                        ventajas: 'Estimulación del crecimiento natural, eliminación de bacterias y brillo orgánico sin siliconas.'
+                    },
+                    'Exfoliación con Sales': {
+                        uso: 'Peeling del cuero cabelludo con sales marinas y extracto de árbol de té para eliminar residuos.',
+                        ventajas: 'Oxigenación folicular profunda y control natural de la oleosidad.'
+                    }
+                }
+            },
+            quimico: {
+                color: '#ff3366',
+                titulo: 'RECONSTRUCCIÓN MOLECULAR SINTÉTICA',
+                servicios: {
+                    'Cauterización de Queratina': {
+                        uso: 'Sellado térmico de polímeros de queratina hidrolizada y complejos de aminoácidos mediante infrarrojos.',
+                        ventajas: 'Blindaje total contra el frizz, reparación de puntas abiertas y resistencia estructural inmediata.'
+                    },
+                    'Nanoplastia Pro': {
+                        uso: 'Nanotecnología ácida que penetra en el córtex para alinear la fibra capilar sin formol.',
+                        ventajas: 'Alaciado técnico de larga duración, suavidad extrema y control de volumen total.'
+                    }
+                }
+            }
+        };
+
+        function cambiarModo(modo) {
+            const info = datos[modo];
+            document.getElementById('cuadro-texto').innerText = info.titulo;
+            document.getElementById('cuadro-texto').style.borderLeftColor = info.color;
+            
+            document.getElementById('btn-nat').className = modo === 'natural' ? 'btn-modo active-nat' : 'btn-modo';
+            document.getElementById('btn-qui').className = modo === 'quimico' ? 'btn-modo active-qui' : 'btn-modo';
+
+            const menu = document.getElementById('menu-servicios');
+            menu.innerHTML = '';
+            Object.keys(info.servicios).forEach(s => {
+                const btn = document.createElement('button');
+                btn.className = 'btn-item';
+                btn.style.borderLeft = `3px solid ${info.color}`;
+                btn.innerText = s;
+                btn.onclick = () => {
+                    document.getElementById('f-titulo').innerText = s;
+                    document.getElementById('f-titulo').style.color = info.color;
+                    document.getElementById('f-titulo').style.borderBottomColor = info.color;
+                    document.getElementById('f-uso').innerText = info.servicios[s].uso;
+                    document.getElementById('f-ventajas').innerText = info.servicios[s].ventajas;
+                    document.getElementById('f-ventajas').style.color = info.color;
+                    document.getElementById('ficha-tecnica').style.display = 'block';
+                    document.getElementById('ficha-tecnica').style.borderColor = info.color;
+                };
+                menu.appendChild(btn);
+            });
+            document.getElementById('ficha-tecnica').style.display = 'none';
+        }
+
+        const music = document.getElementById('bg-music');
+        function toggleMusic() { music.paused ? music.play() : music.pause(); }
+
+        window.onload = () => {
+            const genero = localStorage.getItem('usuario_genero') || 'Hombre';
+            document.getElementById('invitado').src = `avatar_${genero.toLowerCase()}.png`;
+            cambiarModo('natural');
+            particlesJS('particles-js', { "particles": { "number": { "value": 40 }, "color": { "value": "#ffffff" }, "opacity": { "value": 0.2 }, "size": { "value": 1.5 }, "move": { "enable": true, "speed": 1 } } });
+        };
+    </script>
+</body>
+</html>

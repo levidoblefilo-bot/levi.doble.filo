@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>SALA DE SERVICIOS | Levi Doble Filo</title>
+    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body, html { 
+            margin: 0; padding: 0; width: 100%; height: 100vh; 
+            background: #000; font-family: 'Cinzel', serif; 
+            overflow: hidden; 
+        }
+
+        /* FONDO ACTUALIZADO A .JPG */
+        #sala-fondo { 
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
+            background: url('servicios.JPG') no-repeat center center; 
+            background-size: cover; z-index: 0; 
+            filter: brightness(0.8); 
+        }
+
+        #particles-js { 
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%; 
+            z-index: 5; pointer-events: none; 
+        }
+
+        /* LAS 3 PUERTAS (ZONAS DE CLIC) */
+        .zona-clic {
+            position: absolute; top: 0; height: 100vh; z-index: 50; 
+            cursor: pointer; background: transparent;
+        }
+        /* IZQUIERDA: UÑAS */
+        #puerta-izq { left: 0; width: 33.33%; }
+        /* CENTRO: PESTAÑAS Y MAQUILLAJE */
+        #puerta-centro { left: 33.33%; width: 33.33%; }
+        /* DERECHA: DEPILACIÓN */
+        #puerta-der { left: 66.66%; width: 33.33%; }
+
+        #cuadro-texto {
+            position: absolute; top: 5%; left: 50%; transform: translateX(-50%);
+            background: rgba(0,0,0,0.85); color: #fff; padding: 12px 40px; 
+            border-left: 3px solid #ffd700; z-index: 60; text-align: center;
+            text-transform: uppercase; letter-spacing: 2px; min-width: 350px;
+            box-shadow: 0 0 15px rgba(226, 194, 117, 0.3);
+        }
+
+        .escena-central {
+            position: absolute; bottom: 8%; width: 100%; 
+            display: flex; justify-content: center; align-items: flex-end; 
+            z-index: 15; pointer-events: none;
+        }
+
+        #invitado, #asistente { 
+            height: 32vh; width: auto; 
+            filter: drop-shadow(0 0 15px #000); 
+        }
+        #asistente { margin-right: 30px; }
+
+        .btn-regresar { 
+            position: fixed; bottom: 4%; right: 4%; z-index: 100; 
+            background: rgba(0,0,0,0.6); border: 1px solid #fff; color: #fff; 
+            padding: 10px 25px; cursor: pointer; font-family: 'Cinzel';
+            transition: 0.3s;
+        }
+        .btn-regresar:hover { background: #fff; color: #000; }
+    </style>
+</head>
+<body>
+
+    <div id="sala-fondo"></div>
+    <div id="particles-js"></div>
+    <div id="cuadro-texto">SISTEMA DE SERVICIOS: ONLINE</div>
+
+    <div id="puerta-izq" class="zona-clic" title="Ir a Uñas" onclick="window.location.href='unas.html'"></div>
+    <div id="puerta-centro" class="zona-clic" title="Ir a Pestañas" onclick="window.location.href='pestañas.html'"></div>
+    <div id="puerta-der" class="zona-clic" title="Ir a Depilación" onclick="window.location.href='depilacion.html'"></div>
+
+    <div class="escena-central">
+        <img src="asistente.png" id="asistente">
+        <img src="" id="invitado">
+    </div>
+
+    <button class="btn-regresar" onclick="window.location.href='imagen_menu.html'">REGRESAR AL MENÚ</button>
+
+    <script>
+        window.onload = () => {
+            const genero = localStorage.getItem('usuario_genero') || 'Hombre';
+            const imgInvitado = document.getElementById('invitado');
+            if(imgInvitado) {
+                imgInvitado.src = `avatar_${genero.toLowerCase()}.png`;
+            }
+
+            if(typeof particlesJS !== 'undefined'){
+                particlesJS('particles-js', {
+                    "particles": {
+                        "number": { "value": 50 },
+                        "color": { "value": "#e2c275" },
+                        "opacity": { "value": 0.5 },
+                        "size": { "value": 2 },
+                        "move": { "enable": true, "speed": 1.2, "direction": "top" }
+                    }
+                });
+            }
+        };
+    </script>
+</body>
+</html>

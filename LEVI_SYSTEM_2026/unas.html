@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>INGENIERÍA EN UÑAS | Levi Doble Filo</title>
+    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body, html { 
+            margin: 0; padding: 0; width: 100%; height: 100vh; 
+            background: #000; font-family: 'Cinzel', serif; 
+            overflow: hidden; 
+        }
+
+        /* FONDO UNIFICADO */
+        #sala-fondo { 
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
+            background: url('unas.png') no-repeat center center; 
+            background-size: cover; z-index: 0; 
+            filter: brightness(0.5) contrast(1.1); 
+        }
+
+        #particles-js { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 5; pointer-events: none; }
+
+        /* CABECERA ESTILO BOUTIQUE */
+        #cuadro-texto {
+            position: absolute; top: 5%; left: 50%; transform: translateX(-50%);
+            background: rgba(0,0,0,0.85); color: #fff; padding: 12px 40px; 
+            border-left: 3px solid #ffd700; z-index: 60; text-align: center;
+            text-transform: uppercase; letter-spacing: 2px; min-width: 350px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.5);
+        }
+
+        /* MENÚ DE SISTEMAS */
+        #menu-sistemas {
+            position: absolute; top: 20%; left: 5%; width: 28%; z-index: 100;
+            display: flex; flex-direction: column; gap: 12px;
+        }
+        .btn-sistema {
+            background: rgba(0, 20, 30, 0.7); border: 1px solid #ffd70044; color: #fff;
+            padding: 15px; cursor: pointer; font-family: 'Cinzel'; font-size: 0.75rem;
+            text-align: left; transition: 0.4s;
+        }
+        .btn-sistema:hover { 
+            background: #ffd700; color: #000; border-color: #fff; 
+            padding-left: 25px; box-shadow: 0 0 15px #ffd700;
+        }
+
+        /* FICHA TÉCNICA HOLOGRÁFICA */
+        #ficha-tecnica {
+            position: absolute; top: 20%; right: 5%; width: 55%; 
+            background: rgba(0,0,0,0.9); border: 1px solid #ffd700; padding: 30px;
+            z-index: 100; color: #fff; display: none;
+            box-shadow: 0 0 40px rgba(255, 215, 0, 0.1);
+            animation: slideIn 0.5s ease-out;
+        }
+        @keyframes slideIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+
+        .titulo-ficha { color: #ffd700; font-size: 1.4rem; border-bottom: 2px solid #ffd700; margin-bottom: 15px; padding-bottom: 10px; }
+        .seccion-ficha { margin-bottom: 12px; }
+        .seccion-ficha strong { color: #ffd700; display: block; margin-bottom: 3px; font-size: 0.85rem; }
+        .seccion-ficha p { margin: 0; font-size: 0.8rem; line-height: 1.4; color: #ddd; }
+
+        .color-tag { 
+            display: inline-block; margin-top: 8px; padding: 6px 15px;
+            background: linear-gradient(45deg, #ffd700, #b8860b);
+            color: #000; font-weight: bold; font-size: 0.75rem;
+        }
+
+        /* ESCENA CENTRAL CON PERSONAJES */
+        .escena-central { position: absolute; bottom: 5%; width: 100%; display: flex; justify-content: center; align-items: flex-end; z-index: 15; pointer-events: none; }
+        #invitado, #asistente { height: 35vh; filter: drop-shadow(0 0 15px #000); }
+        #asistente { margin-right: 30px; }
+
+        /* BOTÓN DE REGRESO CORREGIDO */
+        .btn-regresar { 
+            position: fixed; bottom: 4%; right: 4%; z-index: 110; 
+            background: rgba(0,0,0,0.6); border: 1px solid #fff; color: #fff; 
+            padding: 10px 25px; cursor: pointer; font-family: 'Cinzel';
+            letter-spacing: 2px; transition: 0.3s;
+        }
+        .btn-regresar:hover { background: #fff; color: #000; }
+    </style>
+</head>
+<body>
+
+    <div id="sala-fondo"></div>
+    <div id="particles-js"></div>
+    <div id="cuadro-texto">INGENIERÍA EN UÑAS: PROTOCOLOS ACTIVOS</div>
+
+    <div id="menu-sistemas">
+        <button class="btn-sistema" onclick="verFicha('Soft Gel')">SOFT GEL PRESS-ON</button>
+        <button class="btn-sistema" onclick="verFicha('Polygel')">POLYGEL HÍBRIDO</button>
+        <button class="btn-sistema" onclick="verFicha('Nivelación')">NIVELACIÓN RUBBER</button>
+        <button class="btn-sistema" onclick="verFicha('Chrome')">CHROME ART TECH</button>
+    </div>
+
+    <div id="ficha-tecnica">
+        <h2 id="f-titulo" class="titulo-ficha">SISTEMA</h2>
+        <div class="seccion-ficha">
+            <strong>PROCESO PASO A PASO:</strong>
+            <p id="f-proceso"></p>
+        </div>
+        <div class="seccion-ficha">
+            <strong>DURABILIDAD:</strong>
+            <p id="f-duracion"></p>
+        </div>
+        <div class="seccion-ficha">
+            <strong>TENDENCIA COLOR 2026:</strong>
+            <div id="f-color" class="color-tag"></div>
+        </div>
+        <button onclick="document.getElementById('ficha-tecnica').style.display='none'" style="margin-top:15px; background:none; border:1px solid #fff; color:#fff; cursor:pointer; padding:8px; font-family:'Cinzel'; width:100%;">CERRAR SCAN</button>
+    </div>
+
+    <div class="escena-central">
+        <img src="asistente.png" id="asistente">
+        <img src="" id="invitado">
+    </div>
+
+    <button class="btn-regresar" onclick="window.location.href='servicios.html'">REGRESAR A SERVICIOS</button>
+
+    <script>
+        const protocolos = {
+            'Soft Gel': {
+                proceso: 'Preparación química, adhesión de tips pre-formados con gel sólido y curado LED 60s. Sin limado de estructura.',
+                duracion: '21 a 28 días.',
+                color: 'VIOLETA DIGITAL'
+            },
+            'Polygel': {
+                proceso: 'Arquitectura manual con solución slip sobre moldes dual. Fusión de fuerza de acrílico con ligereza de gel.',
+                duracion: '30+ días.',
+                color: 'COBRE ELECTROMAGNÉTICO'
+            },
+            'Nivelación': {
+                proceso: 'Manicura de precisión y refuerzo del ápice con base elástica. Crea una superficie perfecta en uña natural.',
+                duracion: '20 a 25 días.',
+                color: 'MILKY CRISTAL'
+            },
+            'Chrome': {
+                proceso: 'Frotado de pigmentos metálicos sobre Top No-Wipe. Sellado reforzado para brillo espejo infinito.',
+                duracion: 'Misma que el sistema base.',
+                color: 'PLATA MERKURI'
+            }
+        };
+
+        function verFicha(id) {
+            const info = protocolos[id];
+            document.getElementById('f-titulo').innerText = id;
+            document.getElementById('f-proceso').innerText = info.proceso;
+            document.getElementById('f-duracion').innerText = info.duracion;
+            document.getElementById('f-color').innerText = info.color;
+            document.getElementById('ficha-tecnica').style.display = 'block';
+            document.getElementById('cuadro-texto').innerText = "DATA ANALYZED: " + id;
+        }
+
+        window.onload = () => {
+            const genero = localStorage.getItem('usuario_genero') || 'Hombre';
+            document.getElementById('invitado').src = `avatar_${genero.toLowerCase()}.png`;
+
+            particlesJS('particles-js', {
+                "particles": {
+                    "number": { "value": 40 },
+                    "color": { "value": "#e2c275" },
+                    "opacity": { "value": 0.4 },
+                    "size": { "value": 2 },
+                    "move": { "enable": true, "speed": 1 }
+                }
+            });
+        };
+    </script>
+</body>
+</html>

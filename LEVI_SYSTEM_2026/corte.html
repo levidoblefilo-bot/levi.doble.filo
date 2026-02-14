@@ -1,0 +1,141 @@
+<!doctype html>
+<html lang="es">
+ <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Boutique Levi - Visagismo</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&amp;display=swap" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html, body { height: 100%; background: linear-gradient(135deg, #1a1a1a 0%, #0d0d0d 100%); color: #fff; font-family: 'Cinzel', serif; overflow: hidden; }
+    body { display: flex; align-items: center; justify-content: center; }
+    .contenedor-sala { width: 100%; height: 100%; display: flex; flex-direction: column; position: relative; }
+    .header-sala { padding: 30px 20px; text-align: center; border-bottom: 2px solid rgba(255,215,0,0.3); background: rgba(0,0,0,0.5); }
+    .badge-sala { display: inline-block; background: linear-gradient(145deg, #ffd700, #b8860b); color: #000; padding: 8px 20px; border-radius: 20px; font-size: 0.9rem; font-weight: bold; }
+    
+    /* BOTÓN INICIAL */
+    .centro-inicio { flex: 1; display: flex; align-items: center; justify-content: center; }
+    .btn-iniciar-test { background: linear-gradient(145deg, #ffd700, #b8860b); color: #000; border: none; padding: 20px 40px; border-radius: 50px; font-family: 'Cinzel'; font-weight: bold; font-size: 1.2rem; cursor: pointer; box-shadow: 0 0 20px rgba(255,215,0,0.3); transition: 0.3s; }
+    .btn-iniciar-test:hover { transform: scale(1.1); box-shadow: 0 0 30px rgba(255,215,0,0.5); }
+
+    /* SECCIÓN TEST */
+    #seccion-test { display: none; flex: 1; flex-direction: column; align-items: center; justify-content: center; padding: 20px; }
+    .pregunta-card { background: rgba(255,255,255,0.05); border: 1px solid #ffd700; border-radius: 15px; padding: 25px; max-width: 600px; width: 100%; display: none; animation: fadeIn 0.5s; }
+    .pregunta-card.activa { display: block; }
+    .opcion-btn { display: block; width: 100%; padding: 15px; margin-top: 10px; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,215,0,0.3); color: #fff; border-radius: 8px; cursor: pointer; text-align: left; font-family: 'Arial', sans-serif; transition: 0.3s; }
+    .opcion-btn:hover { background: rgba(255,215,0,0.2); border-color: #ffd700; }
+
+    /* GALERÍA */
+    .contenido-principal { flex: 1; display: none; align-items: center; justify-content: center; padding: 40px 20px; }
+    .grid-principal { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 15px; width: 100%; max-width: 1200px; }
+    .tarjeta-rostro { background: rgba(255,255,255,0.03); border: 2px solid rgba(255,215,0,0.3); border-radius: 15px; padding: 20px; text-align: center; cursor: pointer; }
+    .nombre-rostro { font-size: 0.95rem; font-weight: bold; color: #ffd700; }
+
+    /* MODAL */
+    .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 1000; align-items: center; justify-content: center; }
+    .modal.activo { display: flex; }
+    .modal-contenido { background: #1a1a1a; border: 2px solid #ffd700; border-radius: 15px; padding: 30px; max-width: 500px; width: 90%; }
+    .corte-item { background: rgba(255,215,0,0.1); border-left: 3px solid #ffd700; padding: 15px; margin-bottom: 10px; text-align: left;}
+    .btn-cerrar { background: #ffd700; color: #000; border: none; padding: 10px; width: 100%; cursor: pointer; font-weight: bold; margin-top: 15px; font-family: 'Cinzel'; }
+    
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+  </style>
+ </head>
+ <body>
+  <div class="contenedor-sala">
+   <div class="header-sala"><span class="badge-sala" id="badge-sala">Boutique Levi</span></div>
+
+   <div class="centro-inicio" id="inicio-test">
+     <button class="btn-iniciar-test" onclick="empezarTest()">✨ Realizar Test de Visagismo 2026</button>
+   </div>
+
+   <div id="seccion-test">
+     <div id="q1" class="pregunta-card activa">
+       <h3>La proporción:</h3>
+       <p>Si mides tu cara del nacimiento del pelo al mentón y de oreja a oreja, ¿tu rostro es más largo que ancho o miden casi lo mismo?</p>
+       <button class="opcion-btn" onclick="next(1, 'A')">A) Es notablemente más largo.</button>
+       <button class="opcion-btn" onclick="next(1, 'B')">B) Miden casi lo mismo.</button>
+     </div>
+     <div id="q2" class="pregunta-card">
+       <h3>La frente:</h3>
+       <p>¿Cómo describirías el ancho de tu frente en comparación con tu mandíbula?</p>
+       <button class="opcion-btn" onclick="next(2, 'A')">A) Mi frente es más ancha que mi mandíbula (forma de triángulo invertido).</button>
+       <button class="opcion-btn" onclick="next(2, 'B')">B) Mi mandíbula es más ancha que mi frente (forma de pera).</button>
+       <button class="opcion-btn" onclick="next(2, 'C')">C) Ambas miden lo mismo (forma cuadrada o rectangular).</button>
+     </div>
+     <div id="q3" class="pregunta-card">
+       <h3>Los pómulos:</h3>
+       <p>Al mirarte al espejo, ¿cuál es la parte más prominente o ancha de tu cara?</p>
+       <button class="opcion-btn" onclick="next(3, 'A')">A) Los pómulos (sobresalen hacia los lados).</button>
+       <button class="opcion-btn" onclick="next(3, 'B')">B) La mandíbula (es el punto más fuerte).</button>
+       <button class="opcion-btn" onclick="next(3, 'C')">C) No resaltan, mi rostro es muy suave y redondeado.</button>
+     </div>
+     <div id="q4" class="pregunta-card">
+       <h3>La mandíbula:</h3>
+       <p>¿Cómo es la línea de tu mentón/mandíbula?</p>
+       <button class="opcion-btn" onclick="next(4, 'A')">A) Muy angulosa, cuadrada o marcada.</button>
+       <button class="opcion-btn" onclick="next(4, 'B')">B) En punta o afilada.</button>
+       <button class="opcion-btn" onclick="next(4, 'C')">C) Redondeada y suave, sin ángulos definidos.</button>
+     </div>
+     <div id="q5" class="pregunta-card">
+       <h3>El nacimiento del cabello:</h3>
+       <p>¿Cómo es la línea donde empieza tu frente?</p>
+       <button class="opcion-btn" onclick="finish('A')">A) Recta y ancha.</button>
+       <button class="opcion-btn" onclick="finish('B')">B) Redondeada o en forma de "corazón".</button>
+       <button class="opcion-btn" onclick="finish('C')">C) Estrecha.</button>
+     </div>
+   </div>
+
+   <div class="contenido-principal" id="galeria"><div class="grid-principal" id="grid-rostros"></div></div>
+  </div>
+
+  <div class="modal" id="modalInfo">
+   <div class="modal-contenido">
+    <h2 id="modalTitulo" style="color:#ffd700; margin-bottom:15px; text-align: center;"></h2>
+    <div id="contenedor-cortes"></div>
+    <button class="btn-cerrar" onclick="cerrar()">Cerrar</button>
+   </div>
+  </div>
+
+  <script>
+    const rostros = [
+      { id: 'alargado', nombre: 'Alargado', cortes: [{n:'French Bob', d:'Corte a la mandíbula con flequillo.'}, {n:'Bottleneck Fringe', d:'Ensancha visualmente el área de los ojos.'}] },
+      { id: 'cuadrado', nombre: 'Cuadrado', cortes: [{n:'C-Cut', d:'Suaviza ángulos rectos de la mandíbula.'}, {n:'Soft Shag', d:'Textura para romper la dureza de facciones.'}] },
+      { id: 'diamante', nombre: 'Diamante', cortes: [{n:'Feathered Layers', d:'Aleja volumen de pómulos.'}, {n:'Side-parted Bob', d:'Suaviza la punta del mentón.'}] },
+      { id: 'redondo', nombre: 'Redondo', cortes: [{n:'Butterfly Cut', d:'Capa corta que enmarca pómulo.'}, {n:'Long Bob', d:'Alarga visualmente el cuello.'}] },
+      { id: 'corazon', nombre: 'Corazón', cortes: [{n:'Chin-length Bob', d:'Densidad en el mentón estrecho.'}, {n:'Bixie', d:'Equilibra frente ancha y mentón.'}] }
+    ];
+
+    let r = {};
+    function empezarTest() { document.getElementById('inicio-test').style.display = 'none'; document.getElementById('seccion-test').style.display = 'flex'; }
+    function next(p, v) { r[p] = v; document.getElementById('q'+p).classList.remove('activa'); document.getElementById('q'+(p+1)).classList.add('activa'); }
+    function finish(v) {
+      r[5] = v; document.getElementById('seccion-test').style.display = 'none'; document.getElementById('galeria').style.display = 'flex';
+      let res = 'alargado';
+      if(r[1] === 'B' && r[3] === 'C') res = 'redondo';
+      else if(r[4] === 'A' || r[2] === 'C') res = 'cuadrado';
+      else if(r[3] === 'A') res = 'diamante';
+      else if(r[2] === 'A' || r[4] === 'B') res = 'corazon';
+      
+      document.getElementById('badge-sala').textContent = "Tu Resultado: " + res.toUpperCase();
+      const grid = document.getElementById('grid-rostros');
+      rostros.forEach(ros => {
+        const div = document.createElement('div');
+        div.className = 'tarjeta-rostro';
+        if(ros.id === res) div.style.borderColor = '#ffd700';
+        div.innerHTML = `<div class="nombre-rostro">${ros.nombre}</div>`;
+        div.onclick = () => abrir(ros);
+        grid.appendChild(div);
+      });
+      abrir(rostros.find(x => x.id === res));
+    }
+    function abrir(ros) {
+      document.getElementById('modalTitulo').textContent = ros.nombre;
+      document.getElementById('contenedor-cortes').innerHTML = ros.cortes.map(c => `<div class="corte-item"><b>${c.n}</b><br><small>${c.d}</small></div>`).join('');
+      document.getElementById('modalInfo').classList.add('activo');
+    }
+    function cerrar() { document.getElementById('modalInfo').classList.remove('activo'); }
+  </script>
+ </body>
+</html>

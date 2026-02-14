@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>CUIDADO | Hub de Ingeniería Molecular</title>
+    <script src="https://cdn.jsdelivr.net"></script>
+    <link href="https://fonts.googleapis.com" rel="stylesheet">
+    <style>
+        body, html { 
+            margin: 0; padding: 0; width: 100%; height: 100vh; 
+            background: #000; font-family: 'Cinzel', serif; 
+            overflow: hidden; 
+        }
+
+        #sala-fondo { 
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
+            background: url('cuidado.png') no-repeat center center; 
+            background-size: cover; z-index: 0; 
+            filter: brightness(0.6); 
+        }
+
+        #particles-js { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 5; pointer-events: none; }
+
+        .zona-clic {
+            position: absolute; top: 0; height: 100vh; z-index: 50; 
+            cursor: pointer; background: transparent;
+        }
+        #puerta-unas { left: 0; width: 25%; }
+        #puerta-mirada { left: 25%; width: 25%; }
+        #puerta-depilacion { left: 50%; width: 25%; }
+        #puerta-servicios { left: 75%; width: 25%; }
+
+        #cuadro-texto {
+            position: absolute; top: 5%; left: 50%; transform: translateX(-50%);
+            background: rgba(0,0,0,0.85); color: #00e5ff; padding: 12px 40px; 
+            border-left: 3px solid #00e5ff; z-index: 60; text-align: center;
+            text-transform: uppercase; letter-spacing: 3px; min-width: 400px;
+            box-shadow: 0 0 15px rgba(0, 229, 255, 0.3);
+        }
+
+        .escena-central {
+            position: absolute; bottom: 5%; width: 100%; 
+            display: flex; justify-content: center; align-items: flex-end; 
+            z-index: 15; pointer-events: none;
+        }
+
+        #invitado, #asistente { height: 35vh; filter: drop-shadow(0 0 15px #000); }
+        #asistente { margin-right: 30px; }
+
+        .btn-regresar { 
+            position: fixed; bottom: 4%; right: 4%; z-index: 100; 
+            background: rgba(0,0,0,0.7); border: 1px solid #00e5ff; color: #fff; 
+            padding: 10px 25px; cursor: pointer; font-family: 'Cinzel';
+            transition: 0.3s; text-transform: uppercase; font-size: 0.7rem;
+        }
+        .btn-regresar:hover { background: #00e5ff; color: #000; }
+    </style>
+</head>
+<body>
+
+    <audio id="musica-fondo" loop>
+        <source src="horas.mp3" type="audio/mpeg">
+    </audio>
+
+    <div id="sala-fondo"></div>
+    <div id="particles-js"></div>
+    <div id="cuadro-texto">NÚCLEO DE CUIDADO: SELECCIONE DESTINO</div>
+
+    <!-- Zonas de clic con interacción de voz -->
+    <div id="puerta-unas" class="zona-clic" onclick="navegar('unas.html')" onmouseenter="hablar('Protocolos de Uñas')"></div>
+    <div id="puerta-mirada" class="zona-clic" onclick="navegar('pestañas.html')" onmouseenter="hablar('Protocolos de Mirada')"></div>
+    <div id="puerta-depilacion" class="zona-clic" onclick="navegar('depilacion.html')" onmouseenter="hablar('Protocolos de Depilación')"></div>
+    <div id="puerta-servicios" class="zona-clic" onclick="navegar('servicios.html')" onmouseenter="hablar('Catálogo de Servicios')"></div>
+
+    <div class="escena-central">
+        <img src="asistente.png" id="asistente">
+        <img src="" id="invitado">
+    </div>
+
+    <button class="btn-regresar" onclick="navegar('imagen_menu.html')">REGRESAR AL MENÚ</button>
+
+    <script>
+        const music = document.getElementById('musica-fondo');
+
+        // FUNCIÓN DE VOZ NATIVA
+        function hablar(texto) {
+            window.speechSynthesis.cancel(); // Detener locución previa
+            const mensaje = new SpeechSynthesisUtterance(texto);
+            mensaje.lang = 'es-ES';
+            mensaje.rate = 0.9; 
+            mensaje.pitch = 0.8;
+            window.speechSynthesis.speak(mensaje);
+        }
+
+        function navegar(url) {
+            localStorage.setItem('musicTime', music.currentTime);
+            window.location.href = url;
+        }
+
+        window.onload = () => {
+            // Cargar avatar del usuario
+            const genero = localStorage.getItem('usuario_genero') || 'Hombre';
+            const imgInvitado = document.getElementById('invitado');
+            if(imgInvitado) {
+                imgInvitado.src = `avatar_${genero.toLowerCase()}.png`;
+            }
+
+            // Sincronizar y reproducir música
+            const savedTime = localStorage.getItem('musicTime');
+            if (savedTime) music.currentTime = savedTime;
+            music.play().catch(() => console.log("Clic requerido para audio"));
+
+            // ACTIVAR VOZ AL CARGAR (Nombre de la página)
+            setTimeout(() => {
+                hablar("Núcleo de Cuidado. Ingeniería Molecular.");
+            }, 600);
+
+            // Actualizar el tiempo en el storage
+            setInterval(() => {
+                localStorage.setItem('musicTime', music.currentTime);
+            }, 1000);
+
+            // Partículas
+            if(typeof particlesJS !== 'undefined'){
+                particlesJS('particles-js', {
+                    "particles": {
+                        "number": { "value": 40 },
+                        "color": { "value": "#00e5ff" },
+                        "opacity": { "value": 0.4 },
+                        "size": { "value": 1.5 },
+                        "move": { "enable": true, "speed": 1, "direction": "top" }
+                    }
+                });
+            }
+        };
+    </script>
+</body>
+</html>

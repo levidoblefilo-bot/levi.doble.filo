@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="es-MX">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Boutique Levi - Reina del Corte</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body, html { margin: 0; padding: 0; background: #000; overflow: hidden; height: 100vh; width: 100vw; font-family: 'Cinzel', serif; }
+        .fondo-wrapper { position: fixed; inset: 0; z-index: 0; }
+        .hero-bg { width: 100%; height: 100%; background: url('butique.png') no-repeat center center; background-size: 100% 100%; }
+        #velo { position: fixed; inset: 0; background: #000; z-index: 1000; transition: 1.5s; pointer-events: none; opacity: 1; }
+        
+        .btn-orilla {
+            position: fixed; top: 20px; right: 20px; z-index: 2000;
+            background: linear-gradient(145deg, #ffd700, #b8860b);
+            border: 1px solid #444; color: black; padding: 10px 25px;
+            cursor: pointer; border-radius: 50px; font-weight: bold; font-size: 0.8rem;
+            text-transform: uppercase; text-decoration: none; box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+        }
+
+        .capa-puertas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 20; }
+        .puerta-interactiva { position: absolute; background: transparent; cursor: pointer; width: 18%; height: 65%; top: 10%; }
+        #puerta-1 { left: 5%; } #puerta-2 { left: 28%; } #puerta-3 { left: 52%; } #puerta-4 { left: 77%; }
+
+        .titulo-superior {
+            position: absolute; top: 5%; left: 50%; transform: translateX(-50%);
+            color: gold; font-size: 2.2rem; text-shadow: 0 0 15px rgba(255,215,0,0.7); z-index: 30;
+        }
+        .personaje { position: absolute; bottom: 0; height: 42vh; width: auto; z-index: 15; pointer-events: none; }
+        #asistente-img { left: 5vw; }
+    </style>
+</head>
+<body onclick="activarAudio()">
+
+    <audio id="music" loop><source src="horas.mp3" type="audio/mpeg"></audio>
+    <div id="velo"></div>
+    <div class="fondo-wrapper"><div class="hero-bg"></div></div>
+
+    <div class="titulo-superior">REINA DEL CORTE</div>
+    
+    <a href="#" class="btn-orilla" onclick="regresarAlMenu(event)">REGRESAR</a>
+
+    <div class="capa-puertas">
+        <div id="puerta-1" class="puerta-interactiva" onclick="ir('corte.html', 'Corte')"></div>
+        <div id="puerta-2" class="puerta-interactiva" onclick="ir('barberia.html', 'Barbería')"></div>
+        <div id="puerta-3" class="puerta-interactiva" onclick="ir('extenciones.html', 'Extensiones')"></div>
+        <div id="puerta-4" class="puerta-interactiva" onclick="ir('peinado.html', 'Peinado')"></div>
+    </div>
+
+    <img src="asistente.png" class="personaje" id="asistente-img">
+
+    <script>
+        function hablar(mensaje) {
+            window.speechSynthesis.cancel();
+            const msg = new SpeechSynthesisUtterance(mensaje);
+            msg.lang = 'es-MX'; 
+            msg.rate = 0.9; 
+            msg.pitch = 0.8;
+            window.speechSynthesis.speak(msg);
+        }
+
+        // FUNCIÓN PARA REGRESAR A IMAGEN_MENU.HTML
+        function regresarAlMenu(event) {
+            event.preventDefault();
+            hablar("Regresando al menú principal.");
+            document.getElementById('velo').style.opacity = '1';
+            setTimeout(() => { 
+                window.location.href = 'imagen_menu.html'; 
+            }, 1300);
+        }
+
+        function ir(url, destino) {
+            hablar(`Entrando a ${destino}.`);
+            document.getElementById('velo').style.opacity = '1';
+            setTimeout(() => { window.location.href = url; }, 1300);
+        }
+
+        function activarAudio() { 
+            document.getElementById('music').play().catch(e => {}); 
+        }
+
+        window.onload = () => { 
+            setTimeout(() => {
+                document.getElementById('velo').style.opacity = '0';
+                hablar("Bienvenido. Soy su asistente. ¿A qué sección desea ir hoy?");
+            }, 600);
+        };
+    </script>
+</body>
+</html>

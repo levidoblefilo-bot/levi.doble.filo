@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>LEVI DOBLE FILO | Inicio</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body, html { margin: 0; padding: 0; background: #000; overflow: hidden; height: 100vh; width: 100vw; font-family: 'Cinzel', serif; }
+        .fondo-escena { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; perspective: 1000px; z-index: 0; }
+        .hero-bg { width: 110%; height: 110%; top: -5%; left: -5%; position: absolute; background: url('entrada_lujo.png') no-repeat; background-size: 100% 100%; filter: brightness(0.35); transition: transform 0.2s ease-out, filter 2s ease-in; }
+        .reflector { position: fixed; top: 0; width: 30vw; height: 100vh; z-index: 5; pointer-events: none; mix-blend-mode: screen; animation: brilloIntenso 3s infinite alternate; }
+        .reflector-izq { left: 0; background: linear-gradient(to right, rgba(255, 215, 0, 0.5), transparent); }
+        .reflector-der { right: 0; background: linear-gradient(to left, rgba(255, 215, 0, 0.5), transparent); }
+        @keyframes brilloIntenso { 0% { opacity: 0.5; filter: brightness(100%); } 100% { opacity: 0.9; filter: brightness(130%); } }
+        .zoom-salida { transform: scale(1.2) !important; filter: brightness(0) !important; }
+        .main { position: relative; z-index: 10; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; text-align: center; }
+        h1 { font-size: clamp(2.5rem, 8vw, 5rem); letter-spacing: 15px; margin: 0; background: linear-gradient(to bottom, #fff, #ffd700); -webkit-background-clip: text; -webkit-text-fill-color: transparent; filter: drop-shadow(0 0 15px rgba(255, 215, 0, 0.5)); }
+        p { color: #ffd700; letter-spacing: 8px; margin-top: 10px; font-weight: bold; }
+        .btn-entrar { margin-top: 40px; padding: 15px 45px; border: 1px solid #ffd700; color: #ffd700; background: rgba(0,0,0,0.8); cursor: pointer; text-decoration: none; font-size: 0.85rem; backdrop-filter: blur(5px); transition: 0.5s; letter-spacing: 4px; text-transform: uppercase; }
+        .btn-entrar:hover { background: #ffd700; color: #000; box-shadow: 0 0 40px rgba(255, 215, 0, 0.8); }
+        #velo { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 1000; opacity: 0; pointer-events: none; transition: 1.5s; }
+    </style>
+</head>
+<body>
+    <audio id="musica-fondo" loop><source src="musica_ambiente.mp3" type="audio/mpeg"></audio>
+    <div id="velo"></div>
+    <div class="fondo-escena"><div class="hero-bg" id="bg"></div></div>
+    <div class="reflector reflector-izq"></div>
+    <div class="reflector reflector-der"></div>
+    <main class="main">
+        <h1>LEVI</h1>
+        <p>DOBLE FILO</p>
+        <a href="#" class="btn-entrar" id="btn-entrar">AVANZAR</a>
+    </main>
+    <script>
+        document.addEventListener('mousemove', (e) => {
+            const moveX = (window.innerWidth / 2 - e.pageX) / 40;
+            const moveY = (window.innerHeight / 2 - e.pageY) / 40;
+            document.getElementById('bg').style.transform = `translate(${moveX}px, ${moveY}px) scale(1.05)`;
+        });
+
+        document.getElementById('btn-entrar').addEventListener('click', function(e) {
+            e.preventDefault();
+            document.getElementById('musica-fondo').play().catch(() => {});
+            document.getElementById('bg').classList.add('zoom-salida');
+            document.getElementById('velo').style.opacity = '1';
+            setTimeout(() => { window.location.href = "sala.html"; }, 1500);
+        });
+    </script>
+</body>
+</html>

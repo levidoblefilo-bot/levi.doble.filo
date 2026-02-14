@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Boutique Levi - Tendencias 2026</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    body, html { margin: 0; padding: 0; background: #000; overflow: hidden; height: 100vh; width: 100vw; font-family: 'Cinzel', serif; }
+    
+    /* FONDO NATURAL */
+    .fondo-wrapper { position: fixed; inset: 0; z-index: 0; }
+    .hero-bg { width: 100%; height: 100%; background: url('peinado.png') no-repeat center center; background-size: cover; }
+    
+    #velo { position: fixed; inset: 0; background: #000; z-index: 1000; transition: 1.5s; pointer-events: none; opacity: 1; }
+
+    .btn-regreso {
+        position: fixed; top: 20px; right: 20px; z-index: 2000;
+        background: linear-gradient(145deg, #ffd700, #b8860b); border: 1px solid #000; color: black;
+        padding: 10px 20px; cursor: pointer; border-radius: 50px; font-weight: bold; font-size: 0.8rem; text-decoration: none;
+    }
+
+    .interfaz-master { position: absolute; top: 8%; left: 50%; transform: translateX(-50%); width: 95%; z-index: 30; text-align: center; }
+    .titulo-tendencia { color: gold; font-size: 2.2rem; text-shadow: 2px 2px 10px #000; margin-bottom: 30px; letter-spacing: 3px; }
+
+    /* BOTONES DE TENDENCIAS 2026 */
+    .grid-tendencias { display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; margin-bottom: 20px; }
+    .btn-estilo {
+        background: rgba(0, 0, 0, 0.8); border: 2px solid gold; color: gold;
+        padding: 20px 5px; cursor: pointer; border-radius: 12px; font-family: 'Cinzel'; font-weight: bold;
+        font-size: 0.8rem; transition: 0.3s; backdrop-filter: blur(10px);
+    }
+    .btn-estilo:hover { background: gold; color: black; transform: scale(1.05); }
+
+    /* CUADRO DE TRANSFORMACIÓN (GALA) */
+    #cuadro-transformacion {
+        display: none; background: rgba(0, 0, 0, 0.9); border: 2px solid gold;
+        padding: 25px; border-radius: 20px; margin: 20px auto; width: 85%; max-width: 600px;
+        color: white; text-align: left; box-shadow: 0 0 30px rgba(255, 215, 0, 0.3);
+        backdrop-filter: blur(15px);
+    }
+    .seccion { margin-bottom: 15px; }
+    .label-oro { color: gold; font-weight: bold; text-transform: uppercase; font-size: 0.75rem; letter-spacing: 1px; display: block; }
+    .texto-info { font-size: 0.95rem; line-height: 1.4; display: block; margin-top: 5px; }
+
+    .personaje { position: absolute; bottom: 0; left: 2vw; height: 45vh; z-index: 15; pointer-events: none; }
+  </style>
+</head>
+<body onclick="activarAudio()">
+
+  <audio id="music" loop><source src="horas.mp3" type="audio/mpeg"></audio>
+  <div id="velo"></div>
+  <div class="fondo-wrapper"><div class="hero-bg"></div></div>
+
+  <a href="butique.html" class="btn-regreso">REGRESAR</a>
+
+  <div class="interfaz-master">
+    <div class="titulo-tendencia">TENDENCIAS 2026</div>
+    
+    <div class="grid-tendencias">
+        <button class="btn-estilo" onclick="mostrarTendencia('bob')">CORTE BOB</button>
+        <button class="btn-estilo" onclick="mostrarTendencia('recogidos')">RECOGIDOS</button>
+        <button class="btn-estilo" onclick="mostrarTendencia('suelto')">SUELTO NATURAL</button>
+        <button class="btn-estilo" onclick="mostrarTendencia('detalles')">DETALLES RETRO</button>
+    </div>
+
+    <div id="cuadro-transformacion">
+        <h3 id="t-titulo" style="color:gold; text-align:center; margin-top:0; border-bottom: 1px solid gold; padding-bottom: 10px;"></h3>
+        
+        <div class="seccion">
+            <span class="label-oro">Día a Día (Casual)</span>
+            <span id="t-dia" class="texto-info"></span>
+        </div>
+        
+        <div class="seccion">
+            <span class="label-oro">Evento de Gala (Social)</span>
+            <span id="t-gala" class="texto-info"></span>
+        </div>
+
+        <div class="seccion" style="background: rgba(255, 215, 0, 0.1); padding: 10px; border-radius: 8px;">
+            <span class="label-oro">✨ Cómo Elevar el Peinado</span>
+            <span id="t-elevar" class="texto-info"></span>
+        </div>
+        
+        <button onclick="cerrarInfo()" style="background:gold; border:none; width:100%; padding:10px; font-family:'Cinzel'; font-weight:bold; cursor:pointer; margin-top:10px;">ACEPTAR</button>
+    </div>
+  </div>
+
+  <img src="asistente.png" class="personaje">
+
+  <script>
+    const tendencias = {
+        bob: {
+            t: "CORTE BOB",
+            d: "Bob moderno: Versión suave con puntas en capas y curva hacia adentro para movimiento natural.",
+            g: "Bob pulido: Acabado liso extremo o con ondas marcadas hacia el rostro para mayor definición.",
+            e: "Usa geles o ceras para eliminar el frizz y dar una estructura perfecta de acabado pulido."
+        },
+        recogidos: {
+            t: "RECOGIDOS",
+            d: "Moños desestructurados: Estilos que parecen hechos por uno mismo, dejando mechones sueltos al frente.",
+            g: "Recogido bajo pulido: Situado en la nuca, con acabado impecable para resaltar escotes importantes.",
+            e: "Incorpora accesorios estratégicos como perlas o acabados metálicos para elevar el look instantáneamente."
+        },
+        suelto: {
+            t: "TEXTURA NATURAL",
+            d: "Prioriza el patrón real del cabello, ya sea rizado o lacio, con muy poco producto.",
+            g: "Ondas Glam: Ondas perfectamente definidas y con brillo tipo alfombra roja.",
+            e: "Utiliza productos con acabado 'espejo' y añade volumen en la coronilla para una silueta dramática."
+        },
+        detalles: {
+            t: "DETALLES & RAYA",
+            d: "Raya al lado: Estilo de los 80 con volumen esponjoso para un look retro-moderno.",
+            g: "Ponytail Alta: Coleta tirante al frente con ondas largas que estilizan las facciones.",
+            e: "Añade pinzas decorativas metálicas, una tendencia fuerte para este 2026."
+        }
+    };
+
+    function hablar(mensaje) {
+        window.speechSynthesis.cancel();
+        const msg = new SpeechSynthesisUtterance(mensaje);
+        msg.lang = 'es-MX'; msg.rate = 0.95;
+        window.speechSynthesis.speak(msg);
+    }
+
+    function mostrarTendencia(id) {
+        const data = tendencias[id];
+        document.getElementById('cuadro-transformacion').style.display = 'block';
+        document.getElementById('t-titulo').innerText = data.t;
+        document.getElementById('t-dia').innerText = data.d;
+        document.getElementById('t-gala').innerText = data.g;
+        document.getElementById('t-elevar').innerText = data.e;
+        
+        hablar(`${data.t} para el 2026. En gala te recomendamos el ${data.g}`);
+    }
+
+    function cerrarInfo() {
+        document.getElementById('cuadro-transformacion').style.display = 'none';
+    }
+
+    function activarAudio() { document.getElementById('music').play().catch(()=>{}); }
+
+    window.onload = () => { 
+        setTimeout(() => {
+            document.getElementById('velo').style.opacity = '0';
+            hablar("Protocolo de Tendencias 2026 activado. ¿Qué estilo deseas transformar?");
+        }, 800);
+    };
+  </script>
+</body>
+</html>

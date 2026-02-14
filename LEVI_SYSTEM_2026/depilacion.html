@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SISTEMA EPILATORIO | Levi Doble Filo</title>
+    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
+    <style>
+        body, html { margin: 0; padding: 0; width: 100%; height: 100vh; background: #000; font-family: 'Cinzel', serif; overflow: hidden; }
+        
+        #sala-fondo { 
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
+            background: url('depilacion.png') no-repeat center center; 
+            background-size: cover; z-index: 0; 
+            filter: brightness(0.4); transition: 0.8s ease-in-out;
+        }
+
+        #particles-js { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 5; pointer-events: none; }
+        
+        .neon-toggle { position: absolute; top: 8%; left: 50%; transform: translateX(-50%); z-index: 100; cursor: pointer; }
+        .neon-box {
+            padding: 10px 25px; border: 2px solid #a2d149; border-radius: 10px;
+            background: rgba(0,0,0,0.7); display: flex; flex-direction: column; align-items: center; gap: 5px;
+            box-shadow: 0 0 15px #a2d149; transition: 0.5s; color: #a2d149;
+        }
+        .neon-box.oro { border-color: #ffd700; box-shadow: 0 0 15px #ffd700; color: #ffd700; }
+        .neon-box.quimico { border-color: #00e5ff; box-shadow: 0 0 15px #00e5ff; color: #00e5ff; }
+
+        #cuadro-texto {
+            position: absolute; top: 2%; left: 50%; transform: translateX(-50%);
+            background: rgba(0,0,0,0.85); color: #fff; padding: 8px 30px; 
+            border-left: 3px solid #ffd700; z-index: 60; text-align: center;
+            text-transform: uppercase; letter-spacing: 2px; font-size: 0.8rem;
+        }
+
+        .escena-central { position: absolute; bottom: 5%; width: 100%; display: flex; justify-content: center; align-items: flex-end; z-index: 15; pointer-events: none; }
+        #invitado, #asistente { height: 35vh; filter: drop-shadow(0 0 15px #000); }
+        #asistente { margin-right: 20px; }
+
+        #menu-servicios { position: absolute; top: 22%; left: 5%; width: 25%; z-index: 100; display: flex; flex-direction: column; gap: 10px; }
+        .btn-item { background: rgba(0, 0, 0, 0.75); border: 1px solid rgba(255,215,0,0.2); color: #fff; padding: 12px; cursor: pointer; font-family: 'Cinzel'; font-size: 0.7rem; text-align: left; transition: 0.3s; }
+        .btn-item:hover { background: #ffd700; color: #000; transform: translateX(5px); }
+
+        #ficha-tecnica {
+            position: absolute; top: 20%; right: 5%; width: 45%; max-height: 70vh;
+            background: rgba(0,0,0,0.95); border: 1px solid #ffd700; padding: 25px;
+            z-index: 100; color: #fff; display: none; overflow-y: auto;
+        }
+        .f-label { color: #ffd700; font-size: 0.65rem; letter-spacing: 1px; display: block; margin-top: 12px; font-weight: bold; }
+        .f-data { font-size: 0.8rem; color: #ddd; line-height: 1.4; margin: 4px 0; }
+
+        .btn-regresar { 
+            position: fixed; bottom: 4%; right: 4%; z-index: 110; 
+            background: rgba(0,0,0,0.8); border: 1px solid #ffd700; color: #ffd700; 
+            padding: 12px 25px; cursor: pointer; font-family: 'Cinzel';
+        }
+    </style>
+</head>
+<body>
+    <div id="sala-fondo"></div>
+    <div id="particles-js"></div>
+    <div id="cuadro-texto">MÓDULO DE EPILACIÓN CARGADO</div>
+
+    <div class="neon-toggle" onclick="rotarModulo()">
+        <div id="neon-box" class="neon-box">
+            <i id="neon-icon" class="fa-solid fa-bolt"></i>
+            <span id="neon-text">MODO: LÁSER TECNOLÓGICO</span>
+        </div>
+    </div>
+
+    <div class="escena-central">
+        <img src="asistente.png" id="asistente">
+        <img src="" id="invitado">
+    </div>
+
+    <div id="menu-servicios"></div>
+
+    <div id="ficha-tecnica">
+        <h2 id="f-titulo" style="color:#ffd700; border-bottom: 1px solid #ffd700; padding-bottom: 10px; font-size: 1.1rem;"></h2>
+        <div id="f-cuerpo">
+            <span class="f-label">MODO DE REALIZACIÓN:</span>
+            <p id="f-tecnica" class="f-data"></p>
+            <span class="f-label">BENEFICIOS PRINCIPALES:</span>
+            <p id="f-beneficio" class="f-data" style="color: #a2d149;"></p>
+            <span class="f-label">CONTRAS Y RESTRICCIONES:</span>
+            <p id="f-contras" class="f-data" style="color: #ff4d4d;"></p>
+        </div>
+        <button onclick="document.getElementById('ficha-tecnica').style.display='none'" style="width:100%; background:none; border:1px solid #fff; color:#fff; margin-top:15px; cursor:pointer; font-family:'Cinzel'; padding: 8px;">CERRAR SCAN</button>
+    </div>
+
+    <button class="btn-regresar" onclick="window.location.href='servicios.html'">REGRESAR</button>
+
+    <script>
+        let modulos = ['laser', 'hilo', 'quimico'];
+        let indiceActual = 0;
+
+        const datos = {
+            laser: {
+                titulo: 'INGENIERÍA LÁSER DIODO 2026',
+                icon: 'fa-bolt', style: 'verde',
+                servicios: {
+                    'Láser Diodo de Zafiro': {
+                        realizacion: 'Emisión de luz monocromática que calienta el folículo a 65°C mientras el cabezal enfría la piel.',
+                        beneficio: 'Eliminación del 95% del vello, mejora la textura cutánea y elimina la foliculitis.',
+                        contras: 'Requiere varias sesiones. Inefectivo en vello cano o muy rubio.'
+                    }
+                }
+            },
+            hilo: {
+                titulo: 'ARQUITECTURA CON HILO ORGÁNICO',
+                icon: 'fa-thread', style: 'oro',
+                servicios: {
+                    'Mapeo Visagista': {
+                        realizacion: 'Diseño geométrico del rostro con hilo entintado para hallar la simetría perfecta antes de extraer.',
+                        beneficio: 'Define la mirada sin químicos. Efecto lifting natural al no estirar la piel.',
+                        contras: 'Puede ser molesto en zonas sensibles. El vello debe tener al menos 2mm.'
+                    }
+                }
+            },
+            quimico: {
+                titulo: 'PRODUCTOS: QUÍMICOS VS NATURALES',
+                icon: 'fa-flask-vial', style: 'quimico',
+                servicios: {
+                    'Depilación Química (Cremas)': {
+                        realizacion: 'Aplicación de agentes alcalinos (Tioglicolato de calcio) que disuelven la estructura de queratina del vello.',
+                        beneficio: 'Rápido, indoloro y económico para emergencias.',
+                        contras: 'Irritación química, riesgo de quemaduras. El vello crece rápido con punta roma.'
+                    },
+                    'Sugaring (Cera de Azúcar)': {
+                        realizacion: 'Pasta de azúcar, limón y agua aplicada en contra del vello y retirada a favor del crecimiento.',
+                        beneficio: '100% natural, menos doloroso que la cera. Exfolia suavemente.',
+                        contras: 'Difícil de aplicar en climas muy cálidos. Requiere técnica manual experta.'
+                    },
+                    'Cera Elástica Polimérica': {
+                        realizacion: 'Mezcla de resinas químicas de baja temperatura que encapsulan solo el vello, no la piel.',
+                        beneficio: 'Arranque eficaz de vello corto y grueso. Menor enrojecimiento.',
+                        contras: 'Uso de resinas que pueden causar reacciones alérgicas en pieles hipersensibles.'
+                    }
+                }
+            }
+        };
+
+        function rotarModulo() {
+            indiceActual = (indiceActual + 1) % modulos.length;
+            actualizarInterfaz();
+        }
+
+        function actualizarInterfaz() {
+            const modo = modulos[indiceActual];
+            const info = datos[modo];
+            const neonBox = document.getElementById('neon-box');
+            
+            document.getElementById('cuadro-texto').innerText = info.titulo;
+            document.getElementById('neon-text').innerText = `MODO: ${info.titulo}`;
+            document.getElementById('neon-icon').className = `fa-solid ${info.icon}`;
+            
+            neonBox.className = 'neon-box ' + info.style;
+
+            const menu = document.getElementById('menu-servicios');
+            menu.innerHTML = '';
+            Object.keys(info.servicios).forEach(nombre => {
+                const btn = document.createElement('button');
+                btn.className = 'btn-item';
+                btn.innerText = nombre;
+                btn.onclick = () => {
+                    const s = info.servicios[nombre];
+                    document.getElementById('f-titulo').innerText = nombre;
+                    document.getElementById('f-tecnica').innerText = s.realizacion;
+                    document.getElementById('f-beneficio').innerText = s.beneficio;
+                    document.getElementById('f-contras').innerText = s.contras;
+                    document.getElementById('ficha-tecnica').style.display = 'block';
+                };
+                menu.appendChild(btn);
+            });
+            document.getElementById('ficha-tecnica').style.display = 'none';
+        }
+
+        window.onload = () => {
+            const genero = localStorage.getItem('usuario_genero') || 'Hombre';
+            document.getElementById('invitado').src = `avatar_${genero.toLowerCase()}.png`;
+            actualizarInterfaz();
+            particlesJS('particles-js', { "particles": { "number": { "value": 40 }, "color": { "value": "#a2d149" }, "opacity": { "value": 0.4 }, "move": { "enable": true, "speed": 1 } } });
+        };
+    </script>
+</body>
+</html>
